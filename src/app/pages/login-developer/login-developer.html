@@ -1,0 +1,36 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-neutral-content p-4">
+    
+    <div class="card  md:w-full  max-w-lg shadow-2xl  bg-white p-6 md:p-8 rounded-box">
+        
+        <h1 class="text-4xl font-bold text-center mb-6 text-info-content">Bienvenido</h1>
+
+        <h2 class="text-2xl font-semibold mb-6 text-center text-info
+        ">Sign In</h2>
+        
+        <form class="flex flex-col gap-5 w-full">
+            
+            <label class="form-control w-full">
+                <div class="label">
+                    <span class="label-text font-medium text-black">Email</span>
+                </div>
+                <input 
+                    type="email" 
+                    placeholder="Tu Email" 
+                    class="input input-bordered input-info 
+                     w-full mt-2" 
+                    id="emailaddress" 
+                    
+                />
+            </label>
+
+            <button class="btn  btn-info  mt-1  text-white hover:bg-info-focus " 
+             (click)="Authenticate()" 
+             type="submit"
+             onclick="authenticate-modal.showModal()">
+                Sign In
+            </button>
+            
+            
+        </form>
+    </div>
+</div>
