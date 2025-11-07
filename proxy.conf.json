@@ -1,0 +1,10 @@
+{
+  "/api": {
+    "target": "http://127.0.0.1:5136",
+    "secure": false,
+    "changeOrigin": true,
+    "headers": {
+      "Origin": "http://10.10.80.168"
+    }
+  }
+}

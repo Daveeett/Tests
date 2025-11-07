@@ -1,14 +1,15 @@
-<dialog #modal id="modal-authenticate" class="modal modal-bottom sm:modal-middle">
-  <form method="dialog" class="modal-box" id="modalAuthenticateForm" onsubmit="return false;">
-    <h3 class="font-bold text-lg">Verificar código</h3>
-    <p class="py-2 text-sm">Se ha enviado un código al correo <span id="emailDisplay" #emailDisplay class="font-medium"></span>.</p>
-
-    <input id="authCode" type="text" placeholder="Ingrese el código" class="input input-bordered mt-2 w-full" />
+<dialog #modal id="modal-authenticate" class="modal  modal-middle">
+  <form method="dialog" class="modal-box h-70 max-w-[700px]" id="modalAuthenticateForm" onsubmit="return false;">
+    <h2 class="font-bold text-2xl">Verificar código</h2>
+    |<p class="py-2 text-xl mt-2">Antes de continuar, debe comprobar su identidad <span id="emailDisplay" #emailDisplay class="font-medium"></span>.</p>
+    |<p class="py-2 text-lg mt-2">Ingresa el código que fu enviado a tu correo<span  class="font-medium"></span>.</p>
+|
+    <input id="authCode" type="text" placeholder="013423" class="input input-bordered input-xl items-center mt-3 w-full" />
     <p id="codeError" class="text-red-600 text-sm mt-2 hidden">Código incorrecto. Intente de nuevo.</p>
 
     <div class="modal-action">
-      <button type="button" id="verifyBtn" class="btn btn-info" (click)="verify()">Verificar</button>
-      <button type="button" id="cancelBtn" class="btn" (click)="cancel()">Cancelar</button>
+      <button type="button" id="verifyBtn" class="btn bg-gray-400 btn-lg" (click)="verify()">Verificar</button>
+      <button type="button" id="cancelBtn" class="btn btn-lg bg-red-400" (click)="cancel()">Cancelar</button>
     </div>
   </form>
 </dialog>

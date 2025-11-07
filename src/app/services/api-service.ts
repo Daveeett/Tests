@@ -6,14 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
-  // URL base centralizada (ajusta según environment si corresponde)
-  public readonly baseUrl = 'http://localhost:5040';
+  
+  public readonly baseUrl = 'http://127.0.0.1:5136/api';
 
-/*   constructor(public http: HttpClient) {}
- */
-/*   public url(path: string) {
+  constructor(public http: HttpClient) {}
+ 
+  public url(path: string) {
     return `${this.baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
   }
-*/
+
 
 } 

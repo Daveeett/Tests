@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
+import { DeveloperService } from '../../services/developer-service';
 
 @Component({
   selector: 'app-modal-authenticate',
@@ -14,11 +15,9 @@ export class ModalAuthenticate {
 
   private expectedCode: string = '';
 
-  constructor(){}
+  constructor(private developerService:DeveloperService){}
 
-  // Abre el dialog y muestra el email; guarda el código esperado
-  public open(email: string, code: string){
-   /*  this.expectedCode = code;
+  public open(email: string, ){
     if (this.emailDisplayRef && this.emailDisplayRef.nativeElement) {
       this.emailDisplayRef.nativeElement.textContent = email;
     }
@@ -29,24 +28,22 @@ export class ModalAuthenticate {
     // limpiar input
     const input = this.modalRef.nativeElement.querySelector('#authCode') as HTMLInputElement;
     if (input) { input.value = ''; }
- */
+ 
     // Mostrar modal
     this.modalRef.nativeElement.showModal();
   }
 
   public verify(){
-   /*  const input = this.modalRef.nativeElement.querySelector('#authCode') as HTMLInputElement;
+   const input = this.modalRef.nativeElement.querySelector('#authCode') as HTMLInputElement;
     const val = input?.value?.trim() || '';
     const errorEl = this.modalRef.nativeElement.querySelector('#codeError') as HTMLElement;
-
+    
     if(val === this.expectedCode){
-      // verificación correcta
       this.modalRef.nativeElement.close();
       this.verified.emit();
     } else {
-      // mostrar mensaje de error
       if (errorEl) { errorEl.classList.remove('hidden'); }
-    } */
+    } 
   } 
 
   public cancel(){

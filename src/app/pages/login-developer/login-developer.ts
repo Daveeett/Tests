@@ -1,5 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ModalAuthenticate } from '../../components/modal-authenticate/modal-authenticate';
+import { DeveloperService } from '../../services/developer-service';
+import { LoginDeveloperRequest } from '../../interfaces/Requests/login-developer-request';
 
 @Component({
   selector: 'app-login-developer',
@@ -10,27 +12,33 @@ import { ModalAuthenticate } from '../../components/modal-authenticate/modal-aut
 export class LoginDeveloper {
   @ViewChild('authModal') authModal!: ModalAuthenticate;
 
-  constructor(){}
+  constructor(private developerService: DeveloperService){}
 
-  public Authenticate(){
+
+  public validateUser(){
     const email = (document.getElementById('emailaddress') as HTMLInputElement)?.value?.trim();
     if(!email){
-      // Mensaje simple para desarrollo
       alert('Por favor ingresa un email válido.');
       return;
     }
 
-    // Genera un código de 6 dígitos (simulación de envío por correo)
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log('Código enviado:', code); // para pruebas en desarrollo
 
-    // Abre el modal y pasa email + código esperado
-    this.authModal.open(email, code);
-  }
+    this.developerService.validateUser({ EmailAddress: email }).subscribe({
+      next: (response) => {
+        if(response.success) {
+          console.log('Usuario verificado. Procediendo con la autenticación.');
+          this.authModal.open(email);
+        } else {
+          alert('Usuario no válido');
+        }
+      },
+      error: (error) => {
+        console.error('Error al validar usuario:', error);
+        alert('Error al validar usuario. Por favor intente nuevamente.');
+      }
+    })
+        
 
-  public onVerified(){
-    // Aquí realiza la acción final de inicio de sesión (redirigir, token, etc.)
-    console.log('Usuario verificado. Procediendo con inicio de sesión.');
-    // ... añadir lógica real de login ...
+    ;
   }
 }

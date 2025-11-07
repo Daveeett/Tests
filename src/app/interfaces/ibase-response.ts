@@ -1,8 +1,9 @@
 export interface IBaseResponse<T> {
-  count: number;
+
   message: string;
   result: boolean;
   data: T;
-  timestamp: Date;
+  count: number;
   errorCode?: string;
+  timestamp: Date;
 }
