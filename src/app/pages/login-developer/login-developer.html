@@ -25,12 +25,12 @@
 
             <button class="btn  btn-info  mt-1  text-white hover:bg-info-focus " 
              (click)="Authenticate()" 
-             type="submit"
-             onclick="authenticate-modal.showModal()">
+             type="button">
                 Sign In
             </button>
             
-            
         </form>
     </div>
+
+    <app-modal-authenticate #authModal (verified)="onVerified()"></app-modal-authenticate>
 </div>
