@@ -12,33 +12,30 @@ import { LoginDeveloperRequest } from '../../interfaces/Requests/login-developer
 export class LoginDeveloper {
   @ViewChild('authModal') authModal!: ModalAuthenticate;
 
-  constructor(private developerService: DeveloperService){}
+  constructor(private developerService: DeveloperService) {}
 
-
-  public validateUser(){
+  public validateUser() {
     const email = (document.getElementById('emailaddress') as HTMLInputElement)?.value?.trim();
-    if(!email){
+    if (!email) {
       alert('Por favor ingresa un email válido.');
       return;
     }
 
+    const request: LoginDeveloperRequest = { EmailAddress: email };
 
-    this.developerService.validateUser({ EmailAddress: email }).subscribe({
+    this.developerService.validateUser(request).subscribe({
       next: (response) => {
-        if(response.success) {
+        if (response.result) {
           console.log('Usuario verificado. Procediendo con la autenticación.');
           this.authModal.open(email);
         } else {
-          alert('Usuario no válido');
+          alert(response.message || 'Usuario no válido');
         }
       },
       error: (error) => {
         console.error('Error al validar usuario:', error);
         alert('Error al validar usuario. Por favor intente nuevamente.');
       }
-    })
-        
-
-    ;
+    });
   }
 }
