@@ -1,31 +1,44 @@
 <div class="flex flex-col items-center justify-center min-h-screen bg-neutral-content p-4">
     
-    <div class="card  md:w-full h-95  max-w-2xl shadow-2xl  bg-white p-6 md:p-8 rounded-box">
+    <div class="card md:w-full h-auto max-w-xl shadow-2xl bg-white p-6 md:p-8 rounded-box">
         
-        <h1 class="text-5xl font-bold text-center mb-6 text-info-content">Bienvenido</h1>
+        <h1 class="text-5xl font-bold text-center mb-6 text-info">Bienvenido</h1>
+        
 
-        <h2 class="text-3xl font-semibold mb-6 text-center text-info
-        ">Viadoc</h2>
-        
-        <form class="flex flex-col gap-5 w-full">
+        <form class="flex flex-col gap-2 w-full">
             
-            <label class="form-control w-full">
-                <div class="label">
-                    <span class="label-text text-xl font-medium text-black">Email</span>
-                </div>
-                <input 
-                    type="email" 
-                    placeholder="Tu Email" 
-                    class="input input-bordered  input-lg
-                     w-full mt-3" 
-                    id="emailaddress" 
-                    
-                />
+            <label class="input validator w-auto">
+            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <g
+                stroke-linejoin="round"
+                stroke-linecap="round"
+                stroke-width="2.5"
+                fill="none"
+                stroke="currentColor"
+                >
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+                </g>
+            </svg>
+            <input
+                type="email"
+                required
+                placeholder="Email"
+                pattern="[A-Za-z][A-Za-z0-9\-]*"
+                minlength="3"
+                maxlength="30"
+                id="emailaddress"
+            />
             </label>
+            <div role="alert" 
+                 class="alert alert-error alert-soft" 
+                 [class.hidden]="!showEmailError">
+                <span>Por favor ingresa un email válido.</span>
+            </div>
 
-            <button class="btn btn-lg  btn-info  mt-1  text-white hover:bg-info-focus " 
-             (click)="validateUser()" 
-             type="button">
+            <button class="btn btn-md btn-info mt-1 text-white hover:bg-info-focus" 
+                    (click)="validateUser()" 
+                    type="button">
                 Sign In
             </button>
             

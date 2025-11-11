@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { DeveloperService } from '../../services/developer-service';
-
+import { ValidateCodeRequest } from '../../interfaces/Requests/Developer/validate-code-request';
 
 @Component({
   selector: 'app-modal-authenticate',
@@ -15,7 +16,10 @@ export class ModalAuthenticate {
 
   private currentEmail: string = '';
 
-  constructor(private developerService: DeveloperService) {}
+  constructor(
+    private developerService: DeveloperService,
+    private router: Router
+  ) {}
 
   public open(email: string) {
     this.currentEmail = email;
@@ -42,9 +46,10 @@ export class ModalAuthenticate {
   }
 
   private sendAuthenticationCode() {
-    this.developerService.sendAuthenticationCode(this.currentEmail)
+    this.developerService.sendAuthenticationCode({ EmailAddress: this.currentEmail })
       .subscribe({
         next: (response) => {
+          console.log("Code Sended");
           if (!response.result) {
             console.error('Error sending authentication code:', response.message);
           }
@@ -60,12 +65,23 @@ export class ModalAuthenticate {
     const code = input?.value?.trim() || '';
     const errorEl = this.modalRef.nativeElement.querySelector('#codeError');
 
-    this.developerService.verifyAuthenticationCode(this.currentEmail, code)
+    if (!code) {
+      errorEl?.classList.remove('hidden');
+      return;
+    }
+
+    const request: ValidateCodeRequest = { 
+      AuthenticationCode: code,
+    };
+
+    this.developerService.verifyAuthenticationCode(request)
       .subscribe({
         next: (response) => {
           if (response.result) {
+            console.log("Verification Success");
             this.modalRef.nativeElement.close();
             this.verified.emit();
+            this.router.navigate(['/logs-users']);
           } else {
             errorEl?.classList.remove('hidden');
           }
@@ -80,5 +96,5 @@ export class ModalAuthenticate {
   public cancel() {
     this.modalRef.nativeElement.close();
   }
-}import { from } from 'rxjs';
+}
 

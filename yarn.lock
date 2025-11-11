@@ -1199,6 +1199,13 @@
   dependencies:
     tslib "^2.3.0"
 
+"@ng-icons/feather-icons@^32.4.0":
+  version "32.4.0"
+  resolved "https://registry.yarnpkg.com/@ng-icons/feather-icons/-/feather-icons-32.4.0.tgz#cb600f2d38906dbff8f31504666a193695dc90e9"
+  integrity sha512-BvE8AyggrwSVpbmtwb8s3ltDy2J9gxrvIDlIaPPnqUjUt0rqqkSuleHr6x3vh9UN2RgD1zlOxiahaRW16Pm5Cw==
+  dependencies:
+    tslib "^2.3.0"
+
 "@ng-icons/ionicons@^32.4.0":
   version "32.4.0"
   resolved "https://registry.yarnpkg.com/@ng-icons/ionicons/-/ionicons-32.4.0.tgz#1f7558943ed546f72dd7640dd8b51a20595043d2"
