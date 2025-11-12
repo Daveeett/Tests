@@ -1,11 +1,14 @@
 import { Component, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
-import { Router } from '@angular/router';
 import { DeveloperService } from '../../services/developer-service';
 import { ValidateCodeRequest } from '../../interfaces/Requests/Developer/validate-code-request';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  ionSendOutline} from '@ng-icons/ionicons';
 
 @Component({
   selector: 'app-modal-authenticate',
-  imports: [],
+  imports: [NgIcon],
+  viewProviders:[provideIcons({ionSendOutline })],
   templateUrl: './modal-authenticate.html',
   styleUrl: './modal-authenticate.css',
 })
@@ -16,10 +19,7 @@ export class ModalAuthenticate {
 
   private currentEmail: string = '';
 
-  constructor(
-    private developerService: DeveloperService,
-    private router: Router
-  ) {}
+  constructor(private developerService: DeveloperService) {}
 
   public open(email: string) {
     this.currentEmail = email;
@@ -81,7 +81,6 @@ export class ModalAuthenticate {
             console.log("Verification Success");
             this.modalRef.nativeElement.close();
             this.verified.emit();
-            this.router.navigate(['/logs-users']);
           } else {
             errorEl?.classList.remove('hidden');
           }

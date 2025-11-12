@@ -2,7 +2,8 @@
     
     <div class="card md:w-full h-auto max-w-xl shadow-2xl bg-white p-6 md:p-8 rounded-box">
         
-        <h1 class="text-5xl font-bold text-center mb-6 text-info">Bienvenido</h1>
+        <h1 class="text-5xl font-bold text-center mb-6 text-accent">Bienvenido</h1>
+        
         
 
         <form class="flex flex-col gap-2 w-full">
@@ -35,15 +36,16 @@
                  [class.hidden]="!showEmailError">
                 <span>Por favor ingresa un email válido.</span>
             </div>
-
-            <button class="btn btn-md btn-info mt-1 text-white hover:bg-info-focus" 
+            
+            <button class="btn btn-md  btn-accent mt-1 text-white hover:bg-info-focus" 
                     (click)="validateUser()" 
-                    type="button">
+                    type="submit"
+                    >
                 Sign In
             </button>
             
         </form>
     </div>
 
-    <app-modal-authenticate #authModal (verified)="validateUser()"></app-modal-authenticate>
+    <app-modal-authenticate #authModal (verified)="onVerified()"></app-modal-authenticate>
 </div>
