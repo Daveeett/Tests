@@ -1,15 +1,16 @@
 import { Routes } from '@angular/router';
-import path from 'path';
 import { LoginDeveloper } from './pages/login-developer/login-developer';
-import { Component, viewChildren, ViewChildren } from '@angular/core';
-import { LogsUsers } from './pages/logs-users/logs-users';
 import { Tests } from './pages/tests/tests';
+import { LogsUsers } from './pages/logs-users/logs-users';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
+  { path: 'login-developer', component: LoginDeveloper },
+  // Rutas privadas: añadir canActivate: [AuthGuard]
+  { path: 'tests', component: Tests, canActivate: [AuthGuard] },
+  { path: 'logs-users', component: LogsUsers, canActivate: [AuthGuard] },
 
-    { path: '', component: LoginDeveloper },
-    { path:'logs-users', component:LogsUsers},
-    { path:'tests',component:Tests}
-
-    
+  // raíz -> redirigir (ejemplo)
+  { path: '', redirectTo: 'tests', pathMatch: 'full' },
+  { path: '**', redirectTo: '' }
 ];
