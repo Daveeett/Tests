@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Ping } from '../../services/ping';
 import { AuthCodeService } from '../../services/auth-code.service';
 import { interval, Subscription } from 'rxjs';
@@ -44,13 +44,13 @@ export class Tests implements OnInit, OnDestroy {
     this.testService.ping()
       .subscribe({
         next: (response) => {
-          console.log(response.data);
+          console.log(response.data)
           if (!response.result) {
-            console.error('Error:', response.message);
+            console.error('Not pong:(', response.message);
           }
         },
         error: (error) => {
-          console.error('Error en Ping:', error);
+          console.error('Error', error);
         }
       });
   }

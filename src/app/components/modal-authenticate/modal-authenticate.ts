@@ -3,12 +3,13 @@ import { DeveloperService } from '../../services/developer-service';
 import { AuthCodeService } from '../../services/auth-code.service';
 import { ValidateCodeRequest } from '../../interfaces/Requests/Developer/validate-code-request';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { ionSendOutline } from '@ng-icons/ionicons';
+import {
+  ionSendOutline} from '@ng-icons/ionicons';
 
 @Component({
   selector: 'app-modal-authenticate',
   imports: [NgIcon],
-  viewProviders: [provideIcons({ ionSendOutline })],
+  viewProviders:[provideIcons({ionSendOutline })],
   templateUrl: './modal-authenticate.html',
   styleUrl: './modal-authenticate.css',
 })
@@ -19,10 +20,7 @@ export class ModalAuthenticate {
 
   private currentEmail: string = '';
 
-  constructor(
-    private developerService: DeveloperService,
-    private authCodeService: AuthCodeService
-  ) {}
+  constructor(private developerService: DeveloperService, private authCodeService: AuthCodeService) {}
 
   public open(email: string) {
     this.currentEmail = email;
@@ -52,13 +50,13 @@ export class ModalAuthenticate {
     this.developerService.sendAuthenticationCode({ EmailAddress: this.currentEmail })
       .subscribe({
         next: (response) => {
-          console.log("Código enviado");
+          console.log("Code Sended");
           if (!response.result) {
-            console.error('Error al enviar el código:', response.message);
+            console.error('Error sending authentication code:', response.message);
           }
         },
         error: (error) => {
-          console.error('Error al enviar el código:', error);
+          console.error('Error sending authentication code:', error);
         }
       });
   }
@@ -73,7 +71,7 @@ export class ModalAuthenticate {
       return;
     }
 
-    const request: ValidateCodeRequest = {
+    const request: ValidateCodeRequest = { 
       AuthenticationCode: code,
     };
 
@@ -81,7 +79,8 @@ export class ModalAuthenticate {
       .subscribe({
         next: (response) => {
           if (response.result) {
-            console.log("Verificación exitosa");
+            console.log("Verification Success");
+            // Guardar código en localStorage para que AuthGuard permita el acceso
             this.authCodeService.saveAuthCode(code);
             this.modalRef.nativeElement.close();
             this.verified.emit();
@@ -90,7 +89,7 @@ export class ModalAuthenticate {
           }
         },
         error: (error) => {
-          console.error('Error al verificar el código:', error);
+          console.error('Error verifying code:', error);
           errorEl?.classList.remove('hidden');
         }
       });
