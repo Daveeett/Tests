@@ -6,11 +6,8 @@ import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'login-developer', component: LoginDeveloper },
-  // Rutas privadas: añadir canActivate: [AuthGuard]
   { path: 'tests', component: Tests, canActivate: [AuthGuard] },
   { path: 'logs-users', component: LogsUsers, canActivate: [AuthGuard] },
-
-  // raíz -> redirigir (ejemplo)
-  { path: '', redirectTo: 'tests', pathMatch: 'full' },
+  { path: '', redirectTo: 'login-developer', pathMatch: 'full' },
   { path: '**', redirectTo: '' }
 ];

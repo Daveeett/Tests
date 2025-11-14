@@ -65,8 +65,8 @@ export class LoginDeveloper {
 
   // llamado cuando el modal emite verified
   public onVerified(): void {
-    // al verificarse, redirigir al returnUrl si existe o a la página por defecto
-    const target = this.returnUrl || '/';
+    // al verificarse, redirigir al returnUrl si existe o a la página de tests por defecto
+    const target = this.returnUrl || '/tests';
     this.router.navigateByUrl(target);
   }
 }

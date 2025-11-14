@@ -12,12 +12,13 @@ export class AuthGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
     boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
 
-    // Si hay un código válido, permitir
     if (this.authCodeService.hasValidAuthCode()) {
+
       return true;
+
     }
 
-    // Si no está autenticado, redirigir al login y pasar returnUrl
     return this.router.createUrlTree(['/login-developer'], { queryParams: { returnUrl: state.url } });
+
   }
 }

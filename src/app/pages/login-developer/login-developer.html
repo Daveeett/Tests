@@ -25,22 +25,23 @@
                 type="email"
                 required
                 placeholder="Email"
-                pattern="[A-Za-z][A-Za-z0-9\-]*"
                 minlength="3"
-                maxlength="30"
+                maxlength="50"
                 id="emailaddress"
+                name="email"
+                [value]="email"
+                (input)="email = $event.target.value"
             />
             </label>
             <div role="alert" 
                  class="alert alert-error alert-soft" 
-                 [class.hidden]="!showEmailError">
+                 [class.hidden]="!showError">
                 <span>Por favor ingresa un email válido.</span>
             </div>
             
             <button class="btn btn-md  btn-accent mt-1 text-white hover:bg-info-focus" 
                     (click)="validateUser()" 
-                    type="submit"
-                    >
+                    type="button">
                 Sign In
             </button>
             

@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Ping } from '../../services/ping';
 import { AuthCodeService } from '../../services/auth-code.service';
 import { interval, Subscription } from 'rxjs';
-import { Alert } from "../../shared/alert/alert";
 
 @Component({
   selector: 'app-tests',
@@ -16,7 +15,8 @@ export class Tests implements OnInit, OnDestroy {
 
   constructor(
     private testService: Ping,
-    private authCodeService: AuthCodeService
+    private authCodeService: AuthCodeService,
+  
   ) {}
 
   ngOnInit() {
@@ -54,4 +54,6 @@ export class Tests implements OnInit, OnDestroy {
         }
       });
   }
+  
+
 }
