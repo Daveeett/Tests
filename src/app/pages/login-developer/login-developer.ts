@@ -24,7 +24,6 @@ export class LoginDeveloper {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    // capturar returnUrl (si existe) desde query params
     this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
   }
 
@@ -43,7 +42,6 @@ export class LoginDeveloper {
       next: (resp) => {
         this.loading = false;
         if (resp && resp.result) {
-          // solicitar envío de código y abrir modal (la apertura y verificación guardarán el código)
           this.developerService.sendAuthenticationCode(payload).subscribe({
             next: () => this.authModal.open(emailTrim),
             error: (err) => {
@@ -63,9 +61,7 @@ export class LoginDeveloper {
     });
   }
 
-  // llamado cuando el modal emite verified
   public onVerified(): void {
-    // al verificarse, redirigir al returnUrl si existe o a la página de tests por defecto
     const target = this.returnUrl || '/tests';
     this.router.navigateByUrl(target);
   }
