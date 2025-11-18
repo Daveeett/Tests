@@ -8,7 +8,8 @@ export class AuthCodeService {
 
   private readonly AUTH_CODE_KEY = 'authCode';
   private readonly AUTH_CODE_EXPIRY_KEY = 'authCodeExpiry';
-  private readonly CODE_EXPIRY_TIME = 1 * 60 * 1000 ; 
+  
+  private readonly CODE_EXPIRY_TIME = 1 * 60 * 60 * 1000;
 
   constructor() {}
 

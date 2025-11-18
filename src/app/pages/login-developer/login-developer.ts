@@ -62,7 +62,7 @@ export class LoginDeveloper {
   }
 
   public onVerified(): void {
-    const target = this.returnUrl || '/tests';
+    const target = this.returnUrl || '/logs-users';
     this.router.navigateByUrl(target);
   }
 }

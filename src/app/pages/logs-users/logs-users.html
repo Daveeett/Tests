@@ -1,66 +1,23 @@
-<div id="logsUsersTable" class="overflow-x-auto ">
-  <table class="table table-zebra table-md">
+<div id="logsUsersTable" class="overflow-x-auto p-4">
+  <div *ngIf="loading" class="mb-4">Cargando...</div>
+  <div *ngIf="error" class="alert alert-error mb-4">{{ error }}</div>
+
+  <table *ngIf="logs?.length" class="table table-zebra table-md w-full">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Id</th>
-        <th>Identification</th>
-        <th>EmailAddress</th>
-        <th>Date</th>
+        <th>User</th>
+        <th>User IP</th>
+        <th>Login Time</th>
       </tr>
     </thead>
     <tbody>
-      <!-- <tr>
-        <th>{{name}}</th>
-        <td>{{id}}</td>
-        <td>{{identification}}</td>
-        <td>{{emailAddress}}</td>
-        <td>{{date}}</td>
-      </tr> -->
-      <tr>
-        <td>Cy Ganderton</td>
-        <td>Quality Control Specialist</td>
-        <td>Littel, Schaden and Vandervort</td>
-        <td>Canada</td>
-        <td>12/16/2020</td>
+      <tr *ngFor="let row of logs">
+        <td>{{ row.userName }}</td>
+        <td>{{ row.userId }}</td>
+        <td>{{ row.loginTime | date: 'short' }}</td>
       </tr>
-      
-      
-      <tr>
-        <td>Hart Hagerty</td>
-        <td>Desktop Support Technician</td>
-        <td>Zemlak, Daniel and Leannon</td>
-        <td>United States</td>
-        <td>12/5/2020</td>
-      </tr>
-      <tr>
-        <td>Brice Swyre</td>
-        <td>Tax Accountant</td>
-        <td>Carroll Group</td>
-        <td>China</td>
-        <td>8/15/2020</td>
-      </tr>
-      <tr>
-        <td>Marjy Ferencz</td>
-        <td>Office Assistant I</td>
-        <td>Rowe-Schoen</td>
-        <td>Russia</td>
-        <td>3/25/2021</td>
-      
-      </tr>
-      <tr>
-        <td>Yancy Tear</td>
-        <td>Community Outreach Specialist</td>
-        <td>Wyman-Ledner</td>
-        <td>Brazil</td>
-        <td>5/22/2020</td>
-      </tr>
-      <tr>
-        <td>Irma Vasilik</td>
-        <td>Editor</td>
-        <td>Wiza, Bins and Emard</td>
-        <td>Venezuela</td>
-        <td>12/8/2020</td>
-      </tr>
+    </tbody>
   </table>
+
+  <div *ngIf="!loading && (!logs || logs.length === 0)" class="mt-4">No hay registros disponibles.</div>
 </div>
