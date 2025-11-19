@@ -4,6 +4,8 @@ import { DeveloperService } from '../../services/developer-service';
 import { LoginDeveloperRequest } from '../../interfaces/Requests/Developer/login-developer-request';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { AuthCodeService } from '../../services/auth-code.service';
+
 @Component({
   selector: 'app-login-developer',
   imports: [ModalAuthenticate],
@@ -22,8 +24,10 @@ export class LoginDeveloper {
   constructor(
     private developerService: DeveloperService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authCodeService: AuthCodeService
   ) {
+    this.authCodeService.clearAuthCode();
     this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
   }
 
@@ -42,13 +46,7 @@ export class LoginDeveloper {
       next: (resp) => {
         this.loading = false;
         if (resp && resp.result) {
-          this.developerService.sendAuthenticationCode(payload).subscribe({
-            next: () => this.authModal.open(emailTrim),
-            error: (err) => {
-              console.error('sendAuthenticationCode error', err);
-              this.showError = true;
-            }
-          });
+          this.authModal.open(emailTrim);
         } else {
           this.showError = true;
         }
