@@ -59,5 +59,8 @@ export class Tests implements OnInit, OnDestroy {
       });
   }
   
+  public logout(): void {
+    this.authCodeService.logoutAndRedirect();
+  }
 
 }

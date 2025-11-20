@@ -136,6 +136,10 @@ export class LogsUsers implements OnInit, OnDestroy {
     return pages;
   }
 
+  public logout(): void {
+    this.authCodeService.logoutAndRedirect();
+  }
+
   ngOnDestroy(): void {
     this.pollingSubscription?.unsubscribe();
   }

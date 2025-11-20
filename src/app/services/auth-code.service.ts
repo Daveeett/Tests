@@ -137,6 +137,14 @@ export class AuthCodeService {
   }
 
   public logoutAndRedirect(): void {
+    // Stop the session timer
+    if (this.sesionTimer) {
+      clearInterval(this.sesionTimer);
+      this.sesionTimer = null;
+    }
+    // Clear auth code from localStorage
     this.clearAuthCode();
+    // Redirect to login page
+    this.router.navigateByUrl('/login-developer');
   }
 }
