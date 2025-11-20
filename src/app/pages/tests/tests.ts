@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Ping } from '../../services/ping';
 import { AuthCodeService } from '../../services/auth-code.service';
 import { interval, Subscription } from 'rxjs';
@@ -16,16 +17,19 @@ export class Tests implements OnInit, OnDestroy {
   constructor(
     private testService: Ping,
     private authCodeService: AuthCodeService,
-  
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
-    this.updateRemainingTime();
-    this.timerSubscription = interval(1000).subscribe(() => {
+    if (isPlatformBrowser(this.platformId)) {
       this.updateRemainingTime();
-    });
+      this.timerSubscription = interval(1000).subscribe(() => {
+        this.updateRemainingTime();
+      });
+    }
   }
   
+
   ngOnDestroy() {
     this.timerSubscription?.unsubscribe();
   }

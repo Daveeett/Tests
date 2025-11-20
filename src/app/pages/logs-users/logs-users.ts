@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { LogsUsers as LogsUsersService } from '../../services/logs-users';
 import { interval, Subscription } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
@@ -16,17 +16,24 @@ export class LogsUsers implements OnInit, OnDestroy {
   logs: Array<{ userId: string; userName: string; loginTime: string }> = [];
   paginatedLogs: Array<{ userId: string; userName: string; loginTime: string }> = [];
   currentPage = 1;
-  itemsPerPage = 12;
+  itemsPerPage = 11;
   totalPages = 1;
   loading = false;
   error: string | null = null;
 
   private pollingSubscription?: Subscription;
 
-  constructor(private logsService: LogsUsersService,private authCodeService: AuthCodeService) {}
+  constructor(
+    private logsService: LogsUsersService,
+    private authCodeService: AuthCodeService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit(): void {
-    this.authCodeService.startSessionTimer();
+    if (isPlatformBrowser(this.platformId)) {
+      this.authCodeService.startSessionTimer();
+    }
+    
     this.loading = true;
     this.pollingSubscription = interval(3000)
       .pipe(

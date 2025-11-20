@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthCodeService } from './services/auth-code.service';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,8 @@ import { RouterOutlet } from '@angular/router';
 })
 export class App {
   protected readonly title = signal('test');
+
+  constructor(private authCodeService: AuthCodeService) {
+    this.authCodeService.initializeSessionIfExists();
+  }
 }

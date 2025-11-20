@@ -27,7 +27,7 @@ export class LoginDeveloper {
     private route: ActivatedRoute,
     private authCodeService: AuthCodeService
   ) {
-    this.authCodeService.clearAuthCode();
+
     this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
   }
 
@@ -60,7 +60,9 @@ export class LoginDeveloper {
   }
 
   public onVerified(): void {
+    this.authCodeService.startSessionTimer();
     const target = this.returnUrl || '/logs-users';
+    console.log('[LoginDeveloper] Navigating to:', target);
     this.router.navigateByUrl(target);
   }
 }
