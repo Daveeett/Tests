@@ -15,6 +15,7 @@ export class AuthCodeService {
 
   constructor(private router:Router) {}
 
+  //empezar contador de tiempo, verificar si la sesion es valida y redigir cuando la sesion expira
   public startSessionTimer(): void {
     if (this.sesionTimer) clearInterval(this.sesionTimer);
     this.sesionTimer = setInterval(() => {
@@ -27,6 +28,7 @@ export class AuthCodeService {
     }, 2000);
   }
 
+  //funcion para verificar que la sesion sea válida
   public isSessionValid(): boolean {
     if (!this.isLocalStorageAvailable()) {
       return false;
@@ -38,6 +40,7 @@ export class AuthCodeService {
     const expiryTime = parseInt(expiry, 10);
     const currentTime = new Date().getTime();
     const isValid = currentTime < expiryTime;
+    //muestra el tiempo restante de la sesion
     console.log('[AuthCodeService] Validation result:', {
       expiryTime,
       currentTime,
@@ -47,7 +50,9 @@ export class AuthCodeService {
     return isValid;
   }
   
+  //guardar el codigo de autenticacion
   public saveAuthCode(code: string): void {
+    //log que muestra el codigo que se guardó
     console.log('[AuthCodeService] saveAuthCode called with code:', code);
     if (!this.isLocalStorageAvailable()) {
       console.error('[AuthCodeService] localStorage not available, cannot save code');
@@ -56,14 +61,9 @@ export class AuthCodeService {
     const expiryTime = new Date().getTime() + this.CODE_EXPIRY_TIME;
     localStorage.setItem(this.AUTH_CODE_KEY, code);
     localStorage.setItem(this.AUTH_CODE_EXPIRY_KEY, expiryTime.toString());
-    console.log('[AuthCodeService] Code saved successfully. Expiry:', new Date(expiryTime).toISOString());
-    console.log('[AuthCodeService] localStorage contents:', {
-      authCode: localStorage.getItem(this.AUTH_CODE_KEY),
-      authCodeExpiry: localStorage.getItem(this.AUTH_CODE_EXPIRY_KEY)
-    });
   }
    
-
+  //verificar que el localstorage esté dispoible
   private isLocalStorageAvailable(): boolean {
         if (typeof localStorage === 'undefined') {
             return false;
@@ -78,7 +78,7 @@ export class AuthCodeService {
         }
     }
 
-    
+  //obtener el authcode    
   public getAuthCode(): string | null {
     if (!this.isLocalStorageAvailable()) {
       return null;
@@ -93,7 +93,7 @@ export class AuthCodeService {
 
     const expiryTime = parseInt(expiry, 10);
     const currentTime = new Date().getTime();
-
+    //verificacion que el tiempo de sesion no exceda el tiempo transcurrido
     if (currentTime > expiryTime) {
       this.clearAuthCode();
       console.warn('El código de autenticación ha expirado');
@@ -102,6 +102,7 @@ export class AuthCodeService {
     return code;
     }
 
+  
   public hasValidAuthCode(): boolean {
     if (!this.isLocalStorageAvailable()) {
       return false;
@@ -109,6 +110,7 @@ export class AuthCodeService {
     return this.getAuthCode() !== null;
   }
 
+  //funcion para obtener el tiempo restante de la sesion
   public getRemainingTime(): number {
     if (!this.isLocalStorageAvailable()) return 0;
     const expiry = localStorage.getItem(this.AUTH_CODE_EXPIRY_KEY);
@@ -121,6 +123,7 @@ export class AuthCodeService {
     return remaining > 0 ? remaining : 0;
   }
 
+  //funcion para limpiar el authcode
   public clearAuthCode(): void {
     if (this.isLocalStorageAvailable()) {
       localStorage.removeItem(this.AUTH_CODE_KEY);
@@ -129,6 +132,7 @@ export class AuthCodeService {
     }
   }
 
+  //iniciar sesion si aun es valido el tiempo
   public initializeSessionIfExists(): void {
     if (this.isSessionValid()) {
       this.startSessionTimer();
@@ -136,15 +140,16 @@ export class AuthCodeService {
     
   }
 
+  //cerrar sesion y redirigir al login
   public logoutAndRedirect(): void {
-    // Stop the session timer
+    // detiene el contador
     if (this.sesionTimer) {
       clearInterval(this.sesionTimer);
       this.sesionTimer = null;
     }
-    // Clear auth code from localStorage
+    // limpia el authcode del localStorage
     this.clearAuthCode();
-    // Redirect to login page
+    // redirige a login 
     this.router.navigateByUrl('/login-developer');
   }
 }

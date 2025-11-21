@@ -14,7 +14,7 @@ export class Ping {
 
   constructor(private http: HttpClient, private api: ApiService){}
 
-
+    //ping de prueba
     public ping(): Observable<IBaseResponse<any>> {
       const url = this.api.url(`${this.tests}/ping`);
       return this.http.get<IBaseResponse<any>>(

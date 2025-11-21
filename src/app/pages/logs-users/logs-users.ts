@@ -58,25 +58,19 @@ export class LogsUsers implements OnInit, OnDestroy {
         }
       });
   }
-  updatePaginatedLog():void{
-    const startIndex=(this.currentPage-1)*this.itemsPerPage;
-    const endIndex= startIndex+this.itemsPerPage;
-    this.paginatedLogs=this.logs.slice(startIndex,endIndex)
-  }
 
+  ngOnDestroy(): void {
+    this.pollingSubscription?.unsubscribe();
+  }
+  
+  //actualizar paginas de los logs
   updatePaginatedLogs(): void {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedLogs = this.logs.slice(startIndex, endIndex);
   }
 
-  nextPages():void{
-    if(this.currentPage< this.totalPages){
-      this.currentPage++;
-      this.updatePaginatedLogs();
-    }
-  }
-
+  //siguiente pagina de los logs
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
@@ -84,14 +78,7 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
   }
 
-  paginaPrevia():void{
-    if(this.currentPage>1){
-      this.currentPage--;
-      this.updatePaginatedLogs();
-    }
-
-
-  }
+  //pagina anterior de los logs
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
@@ -99,15 +86,7 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
   }
 
-  irAlaPagina(page:number|string):void{
-    if(typeof page!=='number') return;
-    if(page>=1 &&page<=this.totalPages){
-      this.currentPage=page;
-      this.updatePaginatedLogs();
-    }
-    
-  }
-
+  //Ir a la pagina seleccionada
   goToPage(page: number | string): void {
     if (typeof page !== 'number') return;
     if (page >= 1 && page <= this.totalPages) {
@@ -116,6 +95,7 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
   }
 
+  //obtener número de páginas
   getPageNumbers(): (number | string)[] {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
@@ -136,11 +116,9 @@ export class LogsUsers implements OnInit, OnDestroy {
     return pages;
   }
 
+  //cerrar sesión
   public logout(): void {
     this.authCodeService.logoutAndRedirect();
   }
 
-  ngOnDestroy(): void {
-    this.pollingSubscription?.unsubscribe();
-  }
 }

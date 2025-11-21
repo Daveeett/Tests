@@ -34,10 +34,12 @@ export class Tests implements OnInit, OnDestroy {
     this.timerSubscription?.unsubscribe();
   }
 
+  //actualizar el tiempo restante
   private updateRemainingTime() {
     this.remainingTime = this.authCodeService.getRemainingTime();
   }
 
+  //hacer ping de prueba
   public Ping() {
     if (!this.authCodeService.hasValidAuthCode()) {
       console.error('Código expirado, inicia sesión nuevamente.');
@@ -59,6 +61,7 @@ export class Tests implements OnInit, OnDestroy {
       });
   }
   
+  //cerrar sesion
   public logout(): void {
     this.authCodeService.logoutAndRedirect();
   }

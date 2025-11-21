@@ -1,16 +1,15 @@
 <div id="logsUsersTable" class="overflow-x-auto p-10">
-  <div *ngIf="loading" class="flex items-center justify-center h-64 loading loading-spinner"></div>
   
   <div class="flex justify-between items-center mb-5">
     <h1 class="text-4xl font-bold text-info-content">Logs de Usuarios</h1>
-    <button (click)="logout()" class="btn bg-primary-content border-none hover:bg-info btn-outline gap-2">
+    <button (click)="logout()" class="btn bg-gray-600 text-white border-none hover:bg-gray-800 btn-md btn-outline gap-2">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
       </svg>
-      Cerrar Sesión
+      Log out
     </button>
   </div>
-
+  
   <table *ngIf="paginatedLogs?.length" class="table table-lg mt-7 p-10 w-full">
     <thead>
       <tr>
@@ -29,22 +28,22 @@
     </tbody>
   </table>
 
-  <nav *ngIf="(logs?.length || 0) > 0" class="flex  w-auto  items-center flex-col md:flex-row justify-between p-4 border-t border-gray-200 pt-4 bg-primary-content dark:bg-gray-800 shadow-md rounded-md" aria-label="Table navigation">
-    <span class="text-sm font-normal text-body mb-4 md:mb-0 block w-full md:inline md:w-auto">
-        Showing <span class="font-semibold text-heading">{{ (currentPage - 1) * itemsPerPage + 1 }}-{{ currentPage * itemsPerPage > logs.length ? logs.length : currentPage * itemsPerPage }}</span> of <span class="font-semibold text-heading">{{ logs.length }}</span>
+  <nav *ngIf="(logs?.length || 0) > 0" class="flex  w-auto  items-center flex-col md:flex-row justify-between p-4 pt-4 mt-3 border-t bg-gray-800  shadow-md rounded-md" aria-label="Table navigation">
+    <span class="text-sm font-normal text-white text-body mb-4 md:mb-0 block w-full md:inline md:w-auto">
+        Showing <span class="font-semibold text-white ">{{ (currentPage - 1) * itemsPerPage + 1 }}-{{ currentPage * itemsPerPage > logs.length ? logs.length : currentPage * itemsPerPage }}</span> of <span class="font-semibold text-heading">{{ logs.length }}</span>
     </span>
-    <ul class="flex space-x-1 text-sm justify-center">
+    <ul class="flex space-x-1 text-sm justify-center text-white">
         <li>
-            <button (click)="prevPage()" [disabled]="currentPage === 1" [class.opacity-50]="currentPage === 1" class="flex items-center justify-center text-body  border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading font-medium rounded-full text-sm px-3 h-9 transition-colors duration-200 transform hover:scale-105 active:scale-95 shadow-sm focus:ring-2 focus:ring-brand focus:outline-none disabled:cursor-not-allowed disabled:opacity-50">Previous</button>
+            <button (click)="prevPage()" [disabled]="currentPage === 1" [class.opacity-50]="currentPage === 1" class="flex items-center justify-center text-body  border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading font-medium rounded-full text-sm px-3 h-9 transition-colors duration-200 transform hover:scale-105 active:scale-95 shadow-sm shadow-white focus:ring-2 focus:ring-brand focus:outline-none disabled:cursor-not-allowed disabled:opacity-50">Previous</button>
         </li>
         <li *ngFor="let page of getPageNumbers()">
-            <button *ngIf="page !== '...'" (click)="goToPage($any(page))" [class.text-fg-brand]="page === currentPage" [class.bg-brand-softer]="page === currentPage" [class.bg-neutral-secondary-medium]="page !== currentPage" class="flex items-center justify-center text-body hover:bg-neutral-tertiary-medium hover:text-heading font-medium rounded-full text-sm w-9 h-9 transition-colors duration-200 transform hover:scale-105 active:scale-95 shadow-sm focus:ring-2 focus:ring-brand focus:outline-none">
+            <button *ngIf="page !== '...'" (click)="goToPage($any(page))" [class.text-fg-brand]="page === currentPage" [class.bg-brand-softer]="page === currentPage" [class.bg-neutral-secondary-medium]="page !== currentPage" class="flex items-center justify-center text-body hover:bg-neutral-tertiary-medium hover:text-heading font-medium rounded-full text-sm w-9 h-9 transition-colors duration-200 transform hover:scale-105 active:scale-95 shadow-sm shadow-white focus:ring-2 focus:ring-brand focus:outline-none">
                 {{ page }}
             </button>
             <span *ngIf="page === '...'" class="flex items-center justify-center text-body bg-neutral-secondary-medium  font-medium rounded-full text-sm w-9 h-9">...</span>
         </li>
         <li>
-            <button (click)="nextPage()" [disabled]="currentPage === totalPages" [class.opacity-50]="currentPage === totalPages" class="flex items-center justify-center text-body bg-neutral-secondary-medium  hover:bg-neutral-tertiary-medium hover:text-heading font-medium rounded-full text-sm px-3 h-9 transition-colors duration-200 transform hover:scale-105 active:scale-95 shadow-sm focus:ring-2 focus:ring-brand focus:outline-none disabled:cursor-not-allowed disabled:opacity-50">Next</button>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages" [class.opacity-50]="currentPage === totalPages" class="flex items-center justify-center text-body bg-neutral-secondary-medium  hover:bg-neutral-tertiary-medium hover:text-heading font-medium rounded-full text-sm px-3 h-9 transition-colors duration-200 transform hover:scale-105 active:scale-95 shadow-sm shadow-white focus:ring-2 focus:ring-brand focus:outline-none disabled:cursor-not-allowed disabled:opacity-50">Next</button>
         </li>
     </ul>
   </nav>

@@ -15,7 +15,7 @@ export class LogsUsers {
 
   constructor(private http: HttpClient, private api: ApiService){}
 
-
+    //consumir el endpoint getlogs (trae una lista de los logs de los usuarios que inician sesion)    
     public getLogs(): Observable<IBaseResponse<LogsUsersResponse>> {
       const url = this.api.url(`${this.developerBase}/getlogs`);
       return this.http.get<IBaseResponse<LogsUsersResponse>>(

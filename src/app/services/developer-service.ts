@@ -20,6 +20,7 @@ export class DeveloperService {
 
   constructor(private http: HttpClient, private api: ApiService) {}
 
+  //consumir el endpoint login(valida que el usuario ingresado exista)
   public validateUser(data: LoginDeveloperRequest): Observable<IBaseResponse<ILoginDeveloperResponse>> {
     const url = this.api.url(`${this.developerBase}/login`);
     return this.http.post<IBaseResponse<ILoginDeveloperResponse>>(
@@ -28,6 +29,7 @@ export class DeveloperService {
     );
   }
 
+  //consumir el endpoint sendauthenticatecode(envia el codigo de autenticacion al correo)
   public sendAuthenticationCode(data: LoginDeveloperRequest): Observable<IBaseResponse<any>> {
     const url = this.api.url(`${this.developerBase}/sendauthenticatecode`);
     return this.http.post<IBaseResponse<any>>(
@@ -35,6 +37,7 @@ export class DeveloperService {
     );
   }
 
+  //consumir el endpoint validateauthenticatecode(verificar que el correo ingresado sea el mismo que el codigo enviado al correo)
   public verifyAuthenticationCode( code: ValidateCodeRequest): Observable<IBaseResponse<any>> {
     
     const url = this.api.url(`${this.developerBase}/validateauthenticatecode`);

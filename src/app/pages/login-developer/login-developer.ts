@@ -31,6 +31,7 @@ export class LoginDeveloper {
     this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
   }
 
+  //validar que el usuario existe(está dentro de los correos de desarrolladores)
   public validateUser(): void {
     this.showError = false;
     const emailTrim = this.email?.trim();
@@ -46,6 +47,7 @@ export class LoginDeveloper {
       next: (resp) => {
         this.loading = false;
         if (resp && resp.result) {
+          //abre el modal de autenticacion
           this.authModal.open(emailTrim);
         } else {
           this.showError = true;
@@ -59,6 +61,7 @@ export class LoginDeveloper {
     });
   }
 
+  //si la autenticacion es correcta, se navega a login-users
   public onVerified(): void {
     this.authCodeService.startSessionTimer();
     const target = this.returnUrl || '/logs-users';
