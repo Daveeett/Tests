@@ -9,28 +9,44 @@
       Log out
     </button>
   </div>
-  
-  <table *ngIf="paginatedLogs?.length" class="table table-lg mt-7 p-10 w-full">
-    <thead>
-      <tr>
-        <th class="text-2xl text-info-content">User</th>
-        <th class="text-2xl text-info-content">User IP</th>
-        <th class="text-2xl text-info-content">Login Time</th>
-      </tr>
-    </thead>
-    <tbody >
-      <tr  *ngFor="let log of paginatedLogs">
-        
-        <td class="text-xl ">{{ log.userName }}</td>
-        <td class="text-xl ">{{ log.userId }}</td>
-        <td class="text-xl ">{{ log.loginTime | date:'medium' }}</td>
-      </tr>
-    </tbody>
-  </table>
 
-  <nav *ngIf="(logs?.length || 0) > 0" class="flex  w-auto  items-center flex-col md:flex-row justify-between p-4 pt-4 mt-3 border-t bg-gray-800  shadow-md rounded-md" aria-label="Table navigation">
+
+    <label class="input input-sm flex items-center gap-2 max-w-md">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input 
+        type="text" 
+        class="grow" 
+        placeholder="Buscar por nombre de usuario..." 
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+      />
+    </label>
+  
+  <div class="min-h-[600px]">
+    <table *ngIf="paginatedLogs?.length" class="table table-md w-full">
+      <thead>
+        <tr>
+          <th class="text-2xl text-info-content">User</th>
+          <th class="text-2xl text-info-content">User IP</th>
+          <th class="text-2xl text-info-content">Login Time</th>
+        </tr>
+      </thead>
+      <tbody >
+        <tr  *ngFor="let log of paginatedLogs">
+          
+          <td class="text-xl ">{{ log.userName }}</td>
+          <td class="text-xl ">{{ log.userId }}</td>
+          <td class="text-xl ">{{ log.loginTime | date:'medium' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <nav *ngIf="(filteredLogs?.length || 0) > 0" class="flex  w-auto items-center flex-col md:flex-row justify-between p-4 pt-4 mt-3 border-t bg-gray-800  shadow-md rounded-md" aria-label="Table navigation">
     <span class="text-sm font-normal text-white text-body mb-4 md:mb-0 block w-full md:inline md:w-auto">
-        Showing <span class="font-semibold text-white ">{{ (currentPage - 1) * itemsPerPage + 1 }}-{{ currentPage * itemsPerPage > logs.length ? logs.length : currentPage * itemsPerPage }}</span> of <span class="font-semibold text-heading">{{ logs.length }}</span>
+        Showing <span class="font-semibold text-white ">{{ (currentPage - 1) * itemsPerPage + 1 }}-{{ currentPage * itemsPerPage > filteredLogs.length ? filteredLogs.length : currentPage * itemsPerPage }}</span> of <span class="font-semibold text-heading">{{ filteredLogs.length }}</span>
     </span>
     <ul class="flex space-x-1 text-sm justify-center text-white">
         <li>
