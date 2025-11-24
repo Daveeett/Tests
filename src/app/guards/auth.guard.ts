@@ -18,9 +18,7 @@ export class AuthGuard implements CanActivate {
     boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
 
     console.log('[AuthGuard] canActivate called for route:', state.url);
-    
-    // On server-side rendering, always allow navigation
-    // The client-side will handle the actual authentication check
+  
     if (!isPlatformBrowser(this.platformId)) {
       console.log('[AuthGuard] Running on server, allowing navigation');
       return true;

@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import { log } from 'console';
 import { match } from 'assert';
+import * as XLSX from 'xlsx';
 
 // Extend dayjs with isBetween plugin
 dayjs.extend(isBetween);
@@ -211,6 +212,37 @@ export class LogsUsers implements OnInit, OnDestroy {
       }
     }
     return pages;
+  }
+
+  //exportar logs a Excel
+  exportToExcel(): void {
+    
+    const dataToExport = this.filteredLogs.map(log => ({
+      'Usuario': log.userName,
+      'IP': log.userIp,
+      'Fecha y Hora de Login': dayjs(log.loginTime).format('DD/MM/YYYY HH:mm:ss')
+    }));
+
+    // Crear una hoja de trabajo
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+
+    // Ajustar el ancho de las columnas
+    const columnWidths = [
+      { wch: 25 }, // Usuario
+      { wch: 20 }, // IP
+      { wch: 25 }  // Fecha y Hora de Login
+    ];
+    worksheet['!cols'] = columnWidths;
+
+    // Crear un libro de trabajo
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Logs de Usuarios');
+
+    // Generar el nombre del archivo con la fecha actual
+    const fileName = `logs_usuarios_${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.xlsx`;
+
+    // Descargar el archivo
+    XLSX.writeFile(workbook, fileName);
   }
 
   //cerrar sesión
