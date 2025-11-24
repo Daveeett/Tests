@@ -10,7 +10,7 @@
     </button>
   </div>
 
-
+  <div class="mb-5 space-y-4">
     <label class="input input-sm flex items-center gap-2 max-w-md">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -23,6 +23,63 @@
         (input)="onSearchChange()"
       />
     </label>
+
+    <div class="flex flex-wrap gap-3 mt-6 items-end">
+      <div class="flex gap-2 items-end">
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text text-sm">Fecha inicio</span>
+          </div>
+          <input 
+            type="date" 
+            class="input input-sm input-bordered ml-3 w-40"
+            [(ngModel)]="startDate"
+            (change)="onDateChange()"
+          />
+        </label>
+        
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text ml-3 text-sm">Fecha fin</span>
+          </div>
+          <input 
+            type="date" 
+            class="input input-sm input-bordered ml-3 w-40"
+            [(ngModel)]="endDate"
+            (change)="onDateChange()"
+          />
+        </label>
+      </div>
+
+      <div class="flex gap-2">
+        <button 
+          (click)="filterToday()" 
+          class="btn btn-sm bg-blue-600 text-white border-none hover:bg-blue-700"
+        >
+          Hoy
+        </button>
+        <button 
+          (click)="filterLastWeek()" 
+          class="btn btn-sm bg-blue-600 text-white border-none hover:bg-blue-700"
+        >
+          Últimos 7 días
+        </button>
+        <button 
+          (click)="filterLast30Days()" 
+          class="btn btn-sm bg-blue-600 text-white border-none hover:bg-blue-700"
+        >
+          Últimos 30 días
+        </button>
+        <button 
+          (click)="clearDateFilters()" 
+          class="btn btn-sm bg-gray-600 text-white border-none hover:bg-gray-700"
+        >
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
   
   <div class="min-h-[600px]">
     <table *ngIf="paginatedLogs?.length" class="table table-md w-full">
@@ -37,7 +94,7 @@
         <tr  *ngFor="let log of paginatedLogs">
           
           <td class="text-xl ">{{ log.userName }}</td>
-          <td class="text-xl ">{{ log.userId }}</td>
+          <td class="text-xl ">{{ log.userIp }}</td>
           <td class="text-xl ">{{ log.loginTime | date:'medium' }}</td>
         </tr>
       </tbody>

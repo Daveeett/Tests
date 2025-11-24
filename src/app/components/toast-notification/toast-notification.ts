@@ -15,7 +15,7 @@ export class ToastNotification {
   private hideTimeout?: number;
 
   //Muestra el toast con un mensaje
-   
+
   public show(message: string, type: 'success' | 'error' | 'info' = 'success', duration: number = 4000): void {
     this.message.set(message);
     this.type.set(type);

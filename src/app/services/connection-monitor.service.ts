@@ -4,6 +4,8 @@ import { interval, Subscription } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Ping } from './ping';
+import { error } from 'console';
+import { response } from 'express';
 
 @Injectable({
   providedIn: 'root'

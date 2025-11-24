@@ -1,6 +1,6 @@
 export interface LogsUsersResponse {
 
-    userId: string;
+    userIp: string;
     userName: string;
     loginTime: string;
     

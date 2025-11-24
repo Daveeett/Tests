@@ -5,6 +5,13 @@ import { LogsUsers as LogsUsersService } from '../../services/logs-users';
 import { interval, Subscription } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 import { AuthCodeService } from '../../services/auth-code.service';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+import { log } from 'console';
+import { match } from 'assert';
+
+// Extend dayjs with isBetween plugin
+dayjs.extend(isBetween);
 
 @Component({
   selector: 'app-logs-users',
@@ -14,10 +21,12 @@ import { AuthCodeService } from '../../services/auth-code.service';
   styleUrl: './logs-users.css',
 })
 export class LogsUsers implements OnInit, OnDestroy {
-  logs: Array<{ userId: string; userName: string; loginTime: string }> = [];
-  filteredLogs: Array<{ userId: string; userName: string; loginTime: string }> = [];
-  paginatedLogs: Array<{ userId: string; userName: string; loginTime: string }> = [];
+  logs: Array<{ userIp: string; userName: string; loginTime: string }> = [];
+  filteredLogs: Array<{ userIp: string; userName: string; loginTime: string }> = [];
+  paginatedLogs: Array<{ userIp: string; userName: string; loginTime: string }> = [];
   searchTerm: string = '';
+  startDate: string = '';
+  endDate: string = '';
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
@@ -65,22 +74,49 @@ export class LogsUsers implements OnInit, OnDestroy {
     this.pollingSubscription?.unsubscribe();
   }
   
-  //filtrar logs por nombre de usuario
+  //filtrar logs por nombre de usuario y rango de fechas
   applyFilter(resetPage: boolean = false): void {
-    if (!this.searchTerm || this.searchTerm.trim() === '') {
-      this.filteredLogs = [...this.logs];
-    } else {
-      const searchLower = this.searchTerm.toLowerCase().trim();
-      this.filteredLogs = this.logs.filter(log => 
-        log.userName.toLowerCase().includes(searchLower)
-      );
-    }
-    this.totalPages = Math.ceil(this.filteredLogs.length / this.itemsPerPage);
+    let filtered = [...this.logs];
     
-    // Solo resetear a la primera página si se solicita explícitamente (cuando el usuario busca)
-    if (resetPage || this.currentPage > this.totalPages) {
-      this.currentPage = this.totalPages > 0 ? Math.min(this.currentPage, this.totalPages) : 1;
+    // Filtrar por nombre de usuario
+    if(this.searchTerm && this.searchTerm.trim()!==''){
+      const searchLover = this.searchTerm.toLowerCase().trim();
+      filtered= filtered.filter(log=>
+        log.userName.toLowerCase().includes(searchLover)
+
+      )
+
     }
+    
+    // Filtrar por rango de fechas
+    if(this.startDate||this.endDate){
+      filtered= filtered.filter(log=>{
+        const logDate= dayjs(log.loginTime);
+        //solo hay fecha de inicio
+        if(this.startDate && !this.endDate){
+          return logDate.isAfter(dayjs(this.startDate).startOf('day'))||
+                  logDate.isSame(dayjs(this.startDate).startOf('day'));
+        }
+        //solo hay fecha de fin
+        if(!this.startDate && this.endDate){
+          return logDate.isBefore(dayjs(this.endDate).endOf('day'))||
+                  logDate.isSame(dayjs(this.endDate).endOf('day'));
+        }
+        //hay fecha de inicio y fecha de fin
+        if(this.startDate && this.endDate){
+          return logDate.isBetween(dayjs(this.startDate).startOf('day'),dayjs(this.endDate).endOf('day'));
+        }
+        return true;
+      })
+    }
+    this.filteredLogs= filtered;
+    this.totalPages= Math.ceil(this.filteredLogs.length / this.itemsPerPage);
+
+    // Solo resetear a la primera página si se solicita explícitamente (cuando el usuario busca)
+    if(resetPage || this.currentPage>this.totalPages){
+      this.currentPage= this.totalPages>0? Math.min(this.currentPage,this.totalPages):1;
+    }
+    
     
     this.updatePaginatedLogs();
   }
@@ -88,6 +124,40 @@ export class LogsUsers implements OnInit, OnDestroy {
   //manejar cambios en el input de búsqueda
   onSearchChange(): void {
     this.applyFilter(true); // Resetear a página 1 cuando el usuario busca
+  }
+
+  //manejar cambios en las fechas
+  onDateChange(): void {
+    this.applyFilter(true); // Resetear a página 1 cuando cambian las fechas
+  }
+
+  //filtro rápido: hoy
+  filterToday(): void {
+    const today = dayjs().format('YYYY-MM-DD');
+    this.startDate = today;
+    this.endDate = today;
+    this.applyFilter(true);
+  }
+
+  //filtro rápido: últimos 7 días
+  filterLastWeek(): void {
+    this.startDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+    this.endDate = dayjs().format('YYYY-MM-DD');
+    this.applyFilter(true);
+  }
+
+  //filtro rápido: últimos 30 días
+  filterLast30Days(): void {
+    this.startDate = dayjs().subtract(30, 'day').format('YYYY-MM-DD');
+    this.endDate = dayjs().format('YYYY-MM-DD');
+    this.applyFilter(true);
+  }
+
+  //limpiar filtros de fecha
+  clearDateFilters(): void {
+    this.startDate = '';
+    this.endDate = '';
+    this.applyFilter(true);
   }
 
   //actualizar paginas de los logs
@@ -104,7 +174,7 @@ export class LogsUsers implements OnInit, OnDestroy {
       this.updatePaginatedLogs();
     }
   }
-
+  
   //pagina anterior de los logs
   prevPage(): void {
     if (this.currentPage > 1) {
