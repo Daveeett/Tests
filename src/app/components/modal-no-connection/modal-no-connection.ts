@@ -1,8 +1,12 @@
 import { Component, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  ionReloadCircleSharp} from '@ng-icons/ionicons';
 @Component({
   selector: 'app-modal-no-connection',
-  imports: [],
+  imports: [NgIcon],
+  viewProviders:[provideIcons({ionReloadCircleSharp})],
   templateUrl: './modal-no-connection.html',
   styleUrl: './modal-no-connection.css',
 })
@@ -20,7 +24,7 @@ export class ModalNoConnection {
     this.modal?.nativeElement.close();
   }
 
-  // Maneja el click en el botón de reintentar
+  //Botón de reintentar
   public retry(): void {
     this.retryConnection.emit();
     this.close();

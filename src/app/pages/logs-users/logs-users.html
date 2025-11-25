@@ -4,15 +4,12 @@
     <h1 class="text-4xl font-bold text-info-content">Logs de Usuarios</h1>
     <div class="flex gap-3">
       <button (click)="exportToExcel()" class="btn bg-green-600 text-white border-none hover:bg-green-700 btn-md btn-outline gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
+        <ng-icon class="text-xl gap-2" name="ionDownloadOutline"></ng-icon>
         Exportar a Excel
       </button>
       <button (click)="logout()" class="btn bg-gray-600 text-white border-none hover:bg-gray-800 btn-md btn-outline gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
+
+          <ng-icon class="text-xl gap-2" name="ionLogOutOutline"></ng-icon>
         Log out
       </button>
     </div>
@@ -20,9 +17,7 @@
 
   <div class="mb-5 space-y-4">
     <label class="input input-sm flex items-center gap-2 max-w-md">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
+      <ng-icon class="text-xl gap-2" name="ionSearch"></ng-icon>
       <input 
         type="text" 
         class="grow" 

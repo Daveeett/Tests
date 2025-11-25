@@ -22,6 +22,7 @@ export class ModalAuthenticate {
 
   constructor(private developerService: DeveloperService, private authCodeService: AuthCodeService) {}
 
+  //Abre el modal
   public open(email: string) {
     this.currentEmail = email;
 
@@ -34,6 +35,7 @@ export class ModalAuthenticate {
     this.modalRef.nativeElement.showModal();
   }
 
+  //restablece la ui
   private resetUI() {
     const errorEl = this.modalRef.nativeElement.querySelector('#codeError');
     if (errorEl) {
@@ -46,6 +48,7 @@ export class ModalAuthenticate {
     }
   }
 
+  //envia el codigo de autenticacion
   private sendAuthenticationCode() {
     this.developerService.sendAuthenticationCode({ EmailAddress: this.currentEmail })
       .subscribe({
@@ -61,6 +64,7 @@ export class ModalAuthenticate {
       });
   }
 
+  //Verifica el codigo de autenticacion
   public verify() {
     const input = this.modalRef.nativeElement.querySelector('#authCode') as HTMLInputElement;
     const code = input?.value?.trim() || '';
@@ -95,6 +99,7 @@ export class ModalAuthenticate {
       });
   }
 
+  //Cierra el modal
   public cancel() {
     this.modalRef.nativeElement.close();
   }

@@ -5,10 +5,14 @@ import { LoginDeveloperRequest } from '../../interfaces/Requests/Developer/login
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthCodeService } from '../../services/auth-code.service';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  ionPersonCircleOutline} from '@ng-icons/ionicons';
 
 @Component({
   selector: 'app-login-developer',
-  imports: [ModalAuthenticate],
+  imports: [ModalAuthenticate,NgIcon],
+  viewProviders:[provideIcons({ionPersonCircleOutline })],
   templateUrl: './login-developer.html',
   styleUrl: './login-developer.css',
 })

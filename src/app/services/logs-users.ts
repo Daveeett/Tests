@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ApiService } from './api-service';
 import { Observable } from 'rxjs';
 import { IBaseResponse } from '../interfaces/ibase-response';
-import { LogsUsersResponse } from '../interfaces/Responses/logs-users-response';
+import { LogsUsersResponse } from '../interfaces/Responses/LogsUsers/logs-users-response';
 
 
 @Injectable({

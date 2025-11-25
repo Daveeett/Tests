@@ -7,17 +7,17 @@ import { startWith, switchMap } from 'rxjs/operators';
 import { AuthCodeService } from '../../services/auth-code.service';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import { log } from 'console';
-import { match } from 'assert';
 import * as XLSX from 'xlsx';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  ionLogOutOutline,ionDownloadOutline,ionSearch} from '@ng-icons/ionicons';
 
-// Extend dayjs with isBetween plugin
 dayjs.extend(isBetween);
 
 @Component({
   selector: 'app-logs-users',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,NgIcon],
+  viewProviders:[provideIcons({ionLogOutOutline,ionDownloadOutline,ionSearch })],
   templateUrl: './logs-users.html',
   styleUrl: './logs-users.css',
 })
@@ -223,14 +223,14 @@ export class LogsUsers implements OnInit, OnDestroy {
       'Fecha y Hora de Login': dayjs(log.loginTime).format('DD/MM/YYYY HH:mm:ss')
     }));
 
-    // Crear una hoja de trabajo
+    // Crear una hoja 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
 
     // Ajustar el ancho de las columnas
     const columnWidths = [
-      { wch: 25 }, // Usuario
-      { wch: 20 }, // IP
-      { wch: 25 }  // Fecha y Hora de Login
+      { wch: 35 }, 
+      { wch: 20 }, 
+      { wch: 25 }  
     ];
     worksheet['!cols'] = columnWidths;
 
