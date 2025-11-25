@@ -1,9 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  ionCheckmarkDoneSharp,ionInformationCircleSharp,ionAlertCircleSharp} from '@ng-icons/ionicons';
 @Component({
   selector: 'app-toast-notification',
-  imports: [CommonModule],
+  imports: [CommonModule,NgIcon],
+  viewProviders:[provideIcons({ionCheckmarkDoneSharp,ionInformationCircleSharp,ionAlertCircleSharp})],
   templateUrl: './toast-notification.html',
   styleUrl: './toast-notification.css',
 })
