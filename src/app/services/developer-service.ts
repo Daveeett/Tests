@@ -7,6 +7,7 @@ import { IBaseResponse } from '../interfaces/ibase-response';
 import { ILoginDeveloperResponse } from '../interfaces/Responses/Developer/Ilogin-developer-response';
 import { ValidateCodeRequest } from '../interfaces/Requests/Developer/validate-code-request';
 import { AnyCatcher } from 'rxjs/internal/AnyCatcher';
+import { LogsUsersResponse } from '../interfaces/Responses/LogsUsers/logs-users-response';
 
 @Injectable({
   providedIn: 'root',
@@ -43,5 +44,13 @@ export class DeveloperService {
     const url = this.api.url(`${this.developerBase}/validateauthenticatecode`);
     
     return this.http.post<IBaseResponse<any>>(url,code);
+  }
+
+  //consumir el endpoint getlogs (trae una lista de los logs de los usuarios que inician sesion)    
+  public getLogs(): Observable<IBaseResponse<LogsUsersResponse>> {
+    const url = this.api.url(`${this.developerBase}/getlogs`);
+    return this.http.get<IBaseResponse<LogsUsersResponse>>(
+      url,
+    );
   }
 }

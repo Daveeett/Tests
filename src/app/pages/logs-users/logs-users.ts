@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LogsUsers as LogsUsersService } from '../../services/logs-users';
 import { interval, Subscription } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 import { AuthCodeService } from '../../services/auth-code.service';
@@ -11,6 +10,7 @@ import * as XLSX from 'xlsx';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   ionLogOutOutline,ionDownloadOutline,ionSearch} from '@ng-icons/ionicons';
+import { DeveloperService } from '../../services/developer-service';
 
 dayjs.extend(isBetween);
 
@@ -37,7 +37,7 @@ export class LogsUsers implements OnInit, OnDestroy {
   private pollingSubscription?: Subscription;
 
   constructor(
-    private logsService: LogsUsersService,
+    private logsService: DeveloperService,
     private authCodeService: AuthCodeService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}

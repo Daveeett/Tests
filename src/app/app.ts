@@ -47,6 +47,5 @@ export class App implements OnInit, OnDestroy {
   // Maneja el evento de reintentar conexión desde el modal
   public onRetryConnection(): void {
     console.log('Se reintentará la conexión');
-    // El monitoreo continuo se encargará de detectar cuando vuelva la conexión
   }
 }
