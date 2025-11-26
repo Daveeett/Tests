@@ -76,7 +76,7 @@ export class ConnectionMonitorService {
       this.monitoringSubscription = undefined;
     }
   }
-
+  
   //Registra callback para cuando se pierde la conexión
   public onConnectionLost(callback: () => void): void {
     this.onConnectionLostCallback = callback;

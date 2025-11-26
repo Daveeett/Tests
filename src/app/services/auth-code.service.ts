@@ -2,6 +2,7 @@
 import { Time } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { clearInterval } from 'node:timers';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class AuthCodeService {
   private sesionTimer:any=null;
 
   constructor(private router:Router) {}
-
+  
   //empezar contador de tiempo, verificar si la sesion es valida y redigir cuando la sesion expira
   public startSessionTimer(): void {
     if (this.sesionTimer) clearInterval(this.sesionTimer);
@@ -40,20 +41,11 @@ export class AuthCodeService {
     const expiryTime = parseInt(expiry, 10);
     const currentTime = new Date().getTime();
     const isValid = currentTime < expiryTime;
-    //muestra el tiempo restante de la sesion
-    console.log('[AuthCodeService] Validation result:', {
-      expiryTime,
-      currentTime,
-      difference: expiryTime - currentTime,
-      isValid
-    });
     return isValid;
   }
   
   //guardar el codigo de autenticacion
   public saveAuthCode(code: string): void {
-    //log que muestra el codigo que se guardó
-    console.log('[AuthCodeService] saveAuthCode called with code:', code);
     if (!this.isLocalStorageAvailable()) {
       console.error('[AuthCodeService] localStorage not available, cannot save code');
       return;
