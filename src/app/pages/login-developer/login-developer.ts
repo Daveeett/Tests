@@ -68,7 +68,7 @@ export class LoginDeveloper {
   //si la autenticacion es correcta, se navega a login-users
   public onVerified(): void {
     this.authCodeService.startSessionTimer();
-    const target = this.returnUrl || '/logs-users';
+    const target = this.returnUrl || '/logs';
     console.log('[LoginDeveloper] Navigating to:', target);
     this.router.navigateByUrl(target);
   }

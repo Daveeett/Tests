@@ -51,7 +51,7 @@ export class LogsUsers implements OnInit, OnDestroy {
     this.pollingSubscription = interval(3000)
       .pipe(
         startWith(0),
-        switchMap(() => this.logsService.getLogs())
+        switchMap(() => this.logsService.getLogsUsers())
       )
       .subscribe({
         next: (resp: any) => {
@@ -140,7 +140,7 @@ export class LogsUsers implements OnInit, OnDestroy {
     this.applyFilter(true);
   }
 
-  //filtro rápido: últimos 7 días
+  //filtro rápido: últimos 7  días
   filterLastWeek(): void {
     this.startDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
     this.endDate = dayjs().format('YYYY-MM-DD');

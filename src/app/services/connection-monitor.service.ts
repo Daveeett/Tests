@@ -31,7 +31,7 @@ export class ConnectionMonitorService {
 
     console.log('Iniciando monitoreo de conexión...');
 
-    this.monitoringSubscription = interval(3000)
+    this.monitoringSubscription = interval(1*10*10*1000)
       .pipe(
         switchMap(() => 
           this.pingService.ping().pipe(

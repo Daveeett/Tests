@@ -8,6 +8,7 @@ import { ILoginDeveloperResponse } from '../interfaces/Responses/Developer/Ilogi
 import { ValidateCodeRequest } from '../interfaces/Requests/Developer/validate-code-request';
 import { AnyCatcher } from 'rxjs/internal/AnyCatcher';
 import { LogsUsersResponse } from '../interfaces/Responses/LogsUsers/logs-users-response';
+import { LogsResponse } from '../interfaces/Responses/Logs/logs-responses';
 
 @Injectable({
   providedIn: 'root',
@@ -47,10 +48,18 @@ export class DeveloperService {
   }
 
   //consumir el endpoint getlogs (trae una lista de los logs de los usuarios que inician sesion)    
-  public getLogs(): Observable<IBaseResponse<LogsUsersResponse>> {
+  public getLogsUsers(): Observable<IBaseResponse<LogsUsersResponse>> {
     const url = this.api.url(`${this.developerBase}/getlogs`);
     return this.http.get<IBaseResponse<LogsUsersResponse>>(
       url,
     );
   }
+
+  public getLogs(): Observable<IBaseResponse<LogsResponse>> {
+    const url = this.api.url(`${this.developerBase}/logs`);
+    return this.http.get<IBaseResponse<LogsResponse>>(
+      url,
+    );
+  }
+  
 }
