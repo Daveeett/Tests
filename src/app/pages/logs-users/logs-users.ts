@@ -11,7 +11,6 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   ionLogOutOutline,ionDownloadOutline,ionSearch} from '@ng-icons/ionicons';
 import { DeveloperService } from '../../services/developer-service';
-import { log } from 'console';
 
 dayjs.extend(isBetween);
 
@@ -49,7 +48,7 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
     
     this.loading = true;
-    this.pollingSubscription = interval(6000)
+    this.pollingSubscription = interval(3000)
       .pipe(
         startWith(0),
         switchMap(() => this.logsService.getLogs())
@@ -77,7 +76,7 @@ export class LogsUsers implements OnInit, OnDestroy {
   }
   
   //filtrar logs por nombre de usuario y rango de fechas
-  public applyFilter(resetPage: boolean = false): void {
+  applyFilter(resetPage: boolean = false): void {
     let filtered = [...this.logs];
     
     // Filtrar por nombre de usuario
@@ -124,17 +123,17 @@ export class LogsUsers implements OnInit, OnDestroy {
   }
 
   //manejar cambios en el input de búsqueda
-  public onSearchChange(): void {
+  onSearchChange(): void {
     this.applyFilter(true); // Resetear a página 1 cuando el usuario busca
   }
 
   //manejar cambios en las fechas
-  public onDateChange(): void {
+  onDateChange(): void {
     this.applyFilter(true); // Resetear a página 1 cuando cambian las fechas
   }
 
   //filtro rápido: hoy
-  public filterToday(): void {
+  filterToday(): void {
     const today = dayjs().format('YYYY-MM-DD');
     this.startDate = today;
     this.endDate = today;
@@ -142,35 +141,35 @@ export class LogsUsers implements OnInit, OnDestroy {
   }
 
   //filtro rápido: últimos 7 días
-  public filterLastWeek(): void {
+  filterLastWeek(): void {
     this.startDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
     this.endDate = dayjs().format('YYYY-MM-DD');
     this.applyFilter(true);
   }
 
   //filtro rápido: últimos 30 días
-  public filterLast30Days(): void {
+  filterLast30Days(): void {
     this.startDate = dayjs().subtract(30, 'day').format('YYYY-MM-DD');
     this.endDate = dayjs().format('YYYY-MM-DD');
     this.applyFilter(true);
   }
 
   //limpiar filtros de fecha
-  public clearDateFilters(): void {
+  clearDateFilters(): void {
     this.startDate = '';
     this.endDate = '';
     this.applyFilter(true);
   }
 
   //actualizar paginas de los logs
-  public updatePaginatedLogs(): void {
+  updatePaginatedLogs(): void {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedLogs = this.filteredLogs.slice(startIndex, endIndex);
   }
 
   //siguiente pagina de los logs
-  public nextPage(): void {
+  nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
       this.updatePaginatedLogs();
@@ -178,7 +177,7 @@ export class LogsUsers implements OnInit, OnDestroy {
   }
   
   //pagina anterior de los logs
-  public prevPage(): void {
+  prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
       this.updatePaginatedLogs();
@@ -186,7 +185,7 @@ export class LogsUsers implements OnInit, OnDestroy {
   }
 
   //Ir a la pagina seleccionada
-  public goToPage(page: number | string): void {
+  goToPage(page: number | string): void {
     if (typeof page !== 'number') return;
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
@@ -195,7 +194,7 @@ export class LogsUsers implements OnInit, OnDestroy {
   }
 
   //obtener número de páginas
-  public getPageNumbers(): (number | string)[] {
+  getPageNumbers(): (number | string)[] {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
 
@@ -215,10 +214,8 @@ export class LogsUsers implements OnInit, OnDestroy {
     return pages;
   }
 
-  
-
   //exportar logs a Excel
-  public exportToExcel(): void {
+  exportToExcel(): void {
     
     const dataToExport = this.filteredLogs.map(log => ({
       'Usuario': log.userName,

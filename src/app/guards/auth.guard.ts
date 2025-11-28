@@ -17,18 +17,23 @@ export class AuthGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
     boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
 
+    console.log('[AuthGuard] canActivate called for route:', state.url);
     //Si se esta en el server, se permite la navegacion
     if (!isPlatformBrowser(this.platformId)) {
+      console.log('[AuthGuard] Running on server, allowing navigation');
       return true;
     }
 
     //Si la sesion es valida, se permite la navegacion
     const isValid = this.authCodeService.isSessionValid();
+    console.log('[AuthGuard] Session valid:', isValid);
     if (isValid) {
+      console.log('[AuthGuard] Allowing navigation to:', state.url);
       return true;
     }
     
     //Si la sesion no es valida, se redirige a la pagina de login
+    console.warn('[AuthGuard] Session invalid, redirecting to login. ReturnUrl:', state.url);
     return this.router.createUrlTree(['/login-developer'], { queryParams: { returnUrl: state.url } });
   }
 }
