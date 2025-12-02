@@ -9,6 +9,7 @@ import { ValidateCodeRequest } from '../interfaces/Requests/Developer/validate-c
 import { AnyCatcher } from 'rxjs/internal/AnyCatcher';
 import { LogsUsersResponse } from '../interfaces/Responses/LogsUsers/logs-users-response';
 import { LogsResponse } from '../interfaces/Responses/Logs/logs-responses';
+import { LogsPaginationResponse } from '../interfaces/Responses/Logs/logs-pagination-response';
 
 @Injectable({
   providedIn: 'root',
@@ -55,11 +56,32 @@ export class DeveloperService {
     );
   }
 
-  public getLogs(): Observable<IBaseResponse<LogsResponse>> {
+  public getLogsByPage(startDate: string, endDate: string, page: number): Observable<IBaseResponse<LogsResponse>> {
     const url = this.api.url(`${this.developerBase}/logs`);
     return this.http.get<IBaseResponse<LogsResponse>>(
       url,
+      {
+        params: new HttpParams()
+          .set('FromDate', startDate)
+          .set('ToDate', endDate)
+          .set('Page', page.toString())
+      }
     );
   }
+
+
+  public getPaginationLogsByDate(startDate: string, endDate: string): Observable<IBaseResponse<LogsPaginationResponse>> {
+    const url = this.api.url(`${this.developerBase}/logs-pagination`);
+    return this.http.get<IBaseResponse<LogsPaginationResponse>>(
+      url,
+      {
+        params: new HttpParams()
+          .set('FromDate', startDate)
+          .set('ToDate', endDate)
+      }
+    );
+  }
+
+  
   
 }

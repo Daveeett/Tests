@@ -2,6 +2,7 @@
   
   <div class="flex justify-between items-center mb-5">
     <h1 class="text-4xl font-bold text-info-content">Logs</h1>
+    
     <div class="flex gap-3">
       <button (click)="exportToExcel()" class="btn bg-green-600 text-white border-none hover:bg-green-700 btn-md btn-outline gap-2">
         <ng-icon class="text-xl gap-2" name="ionDownloadOutline"></ng-icon>
@@ -12,6 +13,20 @@
           <ng-icon class="text-xl gap-2" name="ionLogOutOutline"></ng-icon>
         Log out
       </button>
+      <div class="drawer">
+      <input id="my-drawer-1" type="checkbox" class="drawer-toggle" />
+      <div class="drawer-content">
+        <ng-icon for="my-drawer-1" name="ionMenu" class="btn drawer-button"></ng-icon>
+      </div>
+      <div class="drawer-side">
+        <label for="my-drawer-1" aria-label="close sidebar" class="drawer-overlay"></label>
+        <ul class="menu bg-base-200 min-h-full w-80 p-4">
+          <li class="text-xl"><a>Tests</a></li>
+          <li class="text-xl"><a>Logs Users</a></li>
+          <li class="text-xl"><a>Prueba</a></li>
+        </ul>
+      </div>
+</div>
     </div>
   </div>
 
@@ -43,6 +58,17 @@
           />
         </label>
       </div>
+      <select 
+        class="select select-sm w-40" 
+        [(ngModel)]="selectedPage" 
+        (change)="onPageSelect($event)"
+        [disabled]="availablePages.length === 0"
+      >
+        <option value="" disabled selected>Número de página</option>
+        <option *ngFor="let page of availablePages" [value]="page">
+          Página {{ page }}
+        </option>
+      </select>
 
       <div class="flex gap-2">
         <button 
@@ -53,6 +79,15 @@
         </button>
       </div>
     </div>
+    <div class="text-center " *ngIf="loading">
+      <span class="loading loading-ring loading-6xl"></span>
+    </div>
+    <div class="text-center p-10" *ngIf="!loading && totalLogsCount === 0 && (!startDate || !endDate)">
+      <p class="text-2xl text-gray-500">Seleccione un rango de fechas para ver los logs</p>
+    </div>
+    <div class="text-center p-10" *ngIf="!loading && totalLogsCount === 0 && startDate && endDate">
+      <p class="text-2xl text-gray-500">No se encontraron logs para el rango de fechas seleccionado</p>
+    </div>
   </div>
 
   
@@ -61,26 +96,41 @@
       <thead>
         <tr>
           <th class="text-2xl text-info-content">Posición</th>
-          <th class="text-2xl text-info-content">Fecha y Hora</th>
+          <th class="text-2xl text-info-content">Hora</th>
+          <th class="text-2xl text-info-content">Fecha</th>
           <th class="text-2xl text-info-content">Tipo de Log</th>
           <th class="text-2xl text-info-content">Contenido</th>
         </tr>
       </thead>
-      <tbody >
-        <tr  *ngFor="let log of paginatedLogs">
-          
-          <td class="text-xl ">{{ log.id }}</td>
-          <td class="text-xl ">{{ log.time }}</td>
-          <td class="text-xl ">{{ log.logLevel }}</td>
-          <td class="text-xl ">{{ log.content }}</td>
+      <tbody>
+        <tr *ngFor="let log of paginatedLogs; let i = index">
+          <td class="text-xl text-center">{{ log.id }}</td>
+          <td class="text-xl text-center">{{ log.time }}</td>
+          <td class="text-xl text-center">{{ log.date }}</td>
+          <td class="text-xl text-center">
+            <span [ngClass]="getLogLevelClass(log.logLevel)" class="badge badge-lg font-semibold">
+              {{ log.logLevel }}
+            </span>
+          </td>
+          <td class="text-xl">
+            <div class="collapse collapse-arrow bg-base-200">
+              <input type="checkbox" name="accordion-{{ log.id }}" />
+              <div class="collapse-title text-xl font-medium">
+                {{ log.content.length > 80 ? (log.content.substring(0, 80) + '...') : log.content }}
+              </div>
+              <div class="collapse-content">
+                <p class="whitespace-pre-wrap break-words ">{{ log.content }}</p>
+              </div>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <nav *ngIf="(filteredLogs?.length || 0) > 0" class="flex  w-auto items-center flex-col md:flex-row justify-between p-4 pt-4 mt-3 border-t bg-gray-800  shadow-md rounded-md" aria-label="Table navigation">
+  <nav *ngIf="totalLogsCount > 0" class="flex  w-auto items-center flex-col md:flex-row justify-between p-4 pt-4 mt-3 border-t bg-gray-800  shadow-md rounded-md" aria-label="Table navigation">
     <span class="text-sm font-normal text-white text-body mb-4 md:mb-0 block w-full md:inline md:w-auto">
-        Showing <span class="font-semibold text-white ">{{ (currentPage - 1) * itemsPerPage + 1 }}-{{ currentPage * itemsPerPage > filteredLogs.length ? filteredLogs.length : currentPage * itemsPerPage }}</span> of <span class="font-semibold text-heading">{{ filteredLogs.length }}</span>
+        Mostrando página <span class="font-semibold text-white ">{{ currentPage }}</span> de <span class="font-semibold text-heading">{{ totalPages }}</span> (Total: {{ totalLogsCount }} logs)
     </span>
     <ul class="flex space-x-1 text-sm justify-center text-white">
         <li>

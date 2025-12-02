@@ -17,7 +17,7 @@ export class ConnectionMonitorService {
   private onConnectionLostCallback?: () => void;
   private onConnectionRestoredCallback?: () => void;
 
-  //Inicia el monitoreo de conexión con ping cada 3 segundos
+  //Inicia el monitoreo de conexión
   public startMonitoring(): void {
     // Solo ejecutar en el browser
     if (!isPlatformBrowser(this.platformId)) {

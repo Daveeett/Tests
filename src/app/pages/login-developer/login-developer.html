@@ -1,9 +1,10 @@
-<div class="flex flex-col items-center justify-center min-h-screen p-4">
+<div class="flex flex-col items-center  justify-center min-h-screen p-4">
     
     
-    <div class="card md:w-full h-auto max-w-xl shadow-2xl shadow-gray-500 bg-white p-6 md:p-8 rounded-box">
         
-        <h1 class="text-5xl font-bold text-center mb-6 text-black">Bienvenido</h1>
+    <div class="card md:w-full h-auto  max-w-xl shadow-2xl  shadow-gray-500 bg-white p-6 md:p-8 rounded-box">
+        
+        <span class="skeleton skeleton-text text-5xl  font-bold text-center mb-6 ">Bienvenido</span>
         
         
         <form class="flex flex-col gap-2 w-full">
@@ -36,6 +37,23 @@
             
         </form>
     </div>
+    <div class="hover-3d">
+  
+<!--         content
+  <figure class="max-w-100 rounded-2xl">
+    <img src="https://img.freepik.com/vector-gratis/diseno-tarjeta-credito-realista_23-2149126090.jpg?semt=ais_hybrid&w=740&q=80" alt="3D card" />
+  </figure>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+     end content -->
+</div>
+    
 
     <app-modal-authenticate #authModal (verified)="onVerified()"></app-modal-authenticate>
 </div>

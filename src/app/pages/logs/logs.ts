@@ -1,35 +1,32 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { interval, Subscription } from 'rxjs';
-import { startWith, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { AuthCodeService } from '../../services/auth-code.service';
 import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
 import * as XLSX from 'xlsx';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  ionLogOutOutline,ionDownloadOutline,ionSearch} from '@ng-icons/ionicons';
+  ionLogOutOutline,ionDownloadOutline,ionSearch,ionMenu} from '@ng-icons/ionicons';
 import { DeveloperService } from '../../services/developer-service';
 
-dayjs.extend(isBetween);
 @Component({
   selector: 'app-logs',
   imports: [CommonModule, FormsModule,NgIcon],
-  viewProviders:[provideIcons({ionLogOutOutline,ionDownloadOutline,ionSearch })],
+  viewProviders:[provideIcons({ionLogOutOutline,ionDownloadOutline,ionSearch,ionMenu })],
   templateUrl: './logs.html',
   styleUrl: './logs.css',
 })
 export class Logs implements OnInit,OnDestroy{
 
-  logs: Array<{ id: number; date: string; time: string; logLevel: string; content: string; }> = [];
-  filteredLogs: Array<{ id: number; date: string; time: string; logLevel: string; content: string; }> = [];
   paginatedLogs: Array<{ id: number; date: string; time: string; logLevel: string; content: string; }> = [];
   startDate: string = '';
   endDate: string = '';
   currentPage = 1;
-  itemsPerPage = 50;
+  selectedPage = 1;
   totalPages = 1;
+  availablePages: number[] = [];
+  totalLogsCount = 0;
   loading = false;
   error: string | null = null;
 
@@ -44,77 +41,34 @@ export class Logs implements OnInit,OnDestroy{
       if (isPlatformBrowser(this.platformId)) {
         this.authCodeService.startSessionTimer();
       }
-      
-      this.loading = true;
-      this.pollingSubscription = interval(10000)
-        .pipe(
-          startWith(0),
-          switchMap(() => this.logsService.getLogs())
-        )
-        .subscribe({
-          next: (resp: any) => {
-            this.loading = false;
-            if (resp && resp.result) {
-              this.logs = resp.data || [];
-              this.applyFilter();
-              this.error = null;
-            } else {
-              this.error = resp?.message || 'Error al cargar logs';
-            }
-          },
-          error: (err) => {
-            this.loading = false;
-            this.error = err?.message || String(err);
-          }
-        });
     }
   
     ngOnDestroy(): void {
       this.pollingSubscription?.unsubscribe();
     }
-    
-    //filtrar logs por nombre de usuario y rango de fechas
-    applyFilter(resetPage: boolean = false): void {
-      let filtered = [...this.logs];
-      
-      
-      // Filtrar por rango de fechas
-      if(this.startDate||this.endDate){
-        filtered= filtered.filter(log=>{
-          const logDate= dayjs(log.date);
-          //solo hay fecha de inicio
-          if(this.startDate && !this.endDate){
-            return logDate.isAfter(dayjs(this.startDate).startOf('day'))||
-                    logDate.isSame(dayjs(this.startDate).startOf('day'));
-          }
-          //solo hay fecha de fin
-          if(!this.startDate && this.endDate){
-            return logDate.isBefore(dayjs(this.endDate).endOf('day'))||
-                    logDate.isSame(dayjs(this.endDate).endOf('day'));
-          }
-          //hay fecha de inicio y fecha de fin
-          if(this.startDate && this.endDate){
-            return logDate.isBetween(dayjs(this.startDate).startOf('day'),dayjs(this.endDate).endOf('day'));
-          }
-          return true;
-        })
-      }
-      this.filteredLogs= filtered;
-      this.totalPages= Math.ceil(this.filteredLogs.length / this.itemsPerPage);
-  
-      // Solo resetear a la primera página si se solicita explícitamente (cuando el usuario busca)
-      if(resetPage || this.currentPage>this.totalPages){
-        this.currentPage= this.totalPages>0? Math.min(this.currentPage,this.totalPages):1;
-      }
-      
-      
-      this.updatePaginatedLogs();
-    }
-  
   
     //manejar cambios en las fechas
     onDateChange(): void {
-      this.applyFilter(true); // Resetear a página 1 cuando cambian las fechas
+      if (this.startDate && this.endDate) {
+        this.loading = true;
+        this.logsService.getPaginationLogsByDate(this.startDate, this.endDate)
+          .subscribe({
+            next: (resp) => {
+              this.loading = false;
+              if (resp && resp.result && resp.data) {
+                this.totalPages = resp.data.totalPages;
+                this.totalLogsCount = resp.data.totalLogs;
+                this.availablePages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+                this.selectedPage = 1;
+                this.loadLogsForPage(1);
+              }
+            },
+            error: (err) => {
+              this.loading = false;
+              this.error = err?.message || 'Error al obtener información de paginación';
+            }
+          });
+      }
     }
   
   
@@ -122,29 +76,58 @@ export class Logs implements OnInit,OnDestroy{
     clearDateFilters(): void {
       this.startDate = '';
       this.endDate = '';
-      this.applyFilter(true);
+      this.selectedPage = 1;
+      this.totalPages = 1;
+      this.availablePages = [];
+      this.paginatedLogs = [];
+      this.totalLogsCount = 0;
     }
-  
-    //actualizar paginas de los logs
-    updatePaginatedLogs(): void {
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      this.paginatedLogs = this.filteredLogs.slice(startIndex, endIndex);
+
+    //cargar logs para una página específica
+    loadLogsForPage(page: number): void {
+      if (!this.startDate || !this.endDate) return;
+      
+      this.loading = true;
+      this.logsService.getLogsByPage(this.startDate, this.endDate, page)
+        .subscribe({
+          next: (resp) => {
+            this.loading = false;
+            if (resp && resp.result && resp.data) {
+              this.paginatedLogs = (resp.data as any) || [];
+              this.currentPage = page;
+              this.error = null;
+            } else {
+              this.error = resp?.message || 'Error al cargar logs';
+            }
+          },
+          error: (err) => {
+            this.loading = false;
+            this.error = err?.message || 'Error al cargar logs';
+          }
+        });
+    }
+
+    //manejar selección de página desde el dropdown
+    onPageSelect(event: Event): void {
+      const selectElement = event.target as HTMLSelectElement;
+      const page = parseInt(selectElement.value, 10);
+      if (page && page >= 1 && page <= this.totalPages) {
+        this.selectedPage = page;
+        this.loadLogsForPage(page);
+      }
     }
   
     //siguiente pagina de los logs
     nextPage(): void {
       if (this.currentPage < this.totalPages) {
-        this.currentPage++;
-        this.updatePaginatedLogs();
+        this.loadLogsForPage(this.currentPage + 1);
       }
     }
     
     //pagina anterior de los logs
     prevPage(): void {
       if (this.currentPage > 1) {
-        this.currentPage--;
-        this.updatePaginatedLogs();
+        this.loadLogsForPage(this.currentPage - 1);
       }
     }
   
@@ -152,8 +135,7 @@ export class Logs implements OnInit,OnDestroy{
     goToPage(page: number | string): void {
       if (typeof page !== 'number') return;
       if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-        this.updatePaginatedLogs();
+        this.loadLogsForPage(page);
       }
     }
   
@@ -181,7 +163,7 @@ export class Logs implements OnInit,OnDestroy{
     //exportar logs a Excel
     exportToExcel(): void {
       
-      const dataToExport = this.filteredLogs.map(log => ({
+      const dataToExport = this.paginatedLogs.map((log: any) => ({
         'id': log.id,
         'date': log.date,
         'time': log.time,
@@ -213,10 +195,30 @@ export class Logs implements OnInit,OnDestroy{
       XLSX.writeFile(workbook, fileName);
     }
   
-    //cerrar sesión
-    public logout(): void {
-      this.authCodeService.logoutAndRedirect();
+  //obtener clase CSS según el nivel de log
+  getLogLevelClass(logLevel: string): string {
+    switch (logLevel) {
+      case 'INF':
+        return 'bg-blue-500 text-white';
+      case 'DBG':
+        return 'bg-gray-500 text-white';
+      case 'WRN':
+        return 'bg-yellow-500 text-black';
+      case 'ERR':
+        return 'bg-red-500 text-white';
+      case 'CRT':
+        return 'bg-purple-600 text-white';
+      case 'FTL':
+        return 'bg-black text-white border border-red-600';
+      default:
+        return 'bg-gray-400 text-white';
     }
-  
   }
+
+  //cerrar sesión
+  public logout(): void {
+    this.authCodeService.logoutAndRedirect();
+  }
+
+}
   
