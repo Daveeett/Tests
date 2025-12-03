@@ -50,13 +50,13 @@ export class DeveloperService {
 
   //consumir el endpoint getlogs (trae una lista de los logs de los usuarios que inician sesion)    
   public getLogsUsers(): Observable<IBaseResponse<LogsUsersResponse>> {
-    const url = this.api.url(`${this.developerBase}/getlogs`);
+    const url = this.api.url(`${this.developerBase}/getlogsusers`);
     return this.http.get<IBaseResponse<LogsUsersResponse>>(
       url,
     );
   }
 
-  public getLogsByPage(startDate: string, endDate: string, page: number): Observable<IBaseResponse<LogsResponse>> {
+  public getLogs(startDate: string, endDate: string, page: number): Observable<IBaseResponse<LogsResponse>> {
     const url = this.api.url(`${this.developerBase}/logs`);
     return this.http.get<IBaseResponse<LogsResponse>>(
       url,

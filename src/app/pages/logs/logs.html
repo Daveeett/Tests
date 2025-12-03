@@ -13,20 +13,22 @@
           <ng-icon class="text-xl gap-2" name="ionLogOutOutline"></ng-icon>
         Log out
       </button>
+
       <div class="drawer">
-      <input id="my-drawer-1" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content">
-        <ng-icon for="my-drawer-1" name="ionMenu" class="btn drawer-button"></ng-icon>
+        <input id="my-drawer-1" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content">
+          <label for="my-drawer-1" class="btn drawer-button text-3xl "> ≡</label>
+        </div>
+        <div class="drawer-side">
+          <label for="my-drawer-1" aria-label="close sidebar" class="drawer-overlay "></label>
+          <ul class="menu bg-base-200 min-h-full w-80 p-5 gap-3 ">
+           <li class="text-2xl font-bold border-b-1 border-gray-300" ><a [routerLink]="'/tests'">Tests</a></li>
+           <li class="text-2xl font-bold border-b-1 border-gray-300"><a [routerLink]="'/logs-users'">Logs Users</a></li>
+           <li class="text-2xl font-bold border-b-1 border-gray-300"><a [routerLink]="'/prueba'">Prueba</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="drawer-side">
-        <label for="my-drawer-1" aria-label="close sidebar" class="drawer-overlay"></label>
-        <ul class="menu bg-base-200 min-h-full w-80 p-4">
-          <li class="text-xl"><a>Tests</a></li>
-          <li class="text-xl"><a>Logs Users</a></li>
-          <li class="text-xl"><a>Prueba</a></li>
-        </ul>
-      </div>
-</div>
+
     </div>
   </div>
 
@@ -95,11 +97,11 @@
     <table *ngIf="paginatedLogs?.length" class="table table-md w-full">
       <thead>
         <tr>
-          <th class="text-2xl text-info-content">Posición</th>
-          <th class="text-2xl text-info-content">Hora</th>
-          <th class="text-2xl text-info-content">Fecha</th>
-          <th class="text-2xl text-info-content">Tipo de Log</th>
-          <th class="text-2xl text-info-content">Contenido</th>
+          <th class="text-2xl text-info-content text-center">Posición</th>
+          <th class="text-2xl text-info-content text-center">Hora</th>
+          <th class="text-2xl text-info-content text-center">Fecha</th>
+          <th class="text-2xl text-info-content text-center">Tipo de Log</th>
+          <th class="text-2xl text-info-content ">Contenido</th>
         </tr>
       </thead>
       <tbody>

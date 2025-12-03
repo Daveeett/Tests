@@ -10,8 +10,8 @@ export const routes: Routes = [
   { path: 'login-developer', component: LoginDeveloper },
   { path: 'tests', component: Tests, canActivate: [AuthGuard] },
   { path: 'logs-users', component: LogsUsers, canActivate: [AuthGuard]  },
-  {path:'prueba',component:Prueba,canActivate:[AuthGuard]},
-  {path:'logs',component:Logs,canActivate:[AuthGuard]},
+  { path: 'prueba',component:Prueba,canActivate:[AuthGuard]},
+  { path: 'logs',component:Logs,canActivate:[AuthGuard]},
   { path: '', redirectTo: 'login-developer', pathMatch: 'full' },
   { path: '**', redirectTo: '' }
 ];

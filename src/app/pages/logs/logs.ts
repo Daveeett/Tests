@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { flatMap, Subscription } from 'rxjs';
 import { AuthCodeService } from '../../services/auth-code.service';
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx';
@@ -9,10 +9,11 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   ionLogOutOutline,ionDownloadOutline,ionSearch,ionMenu} from '@ng-icons/ionicons';
 import { DeveloperService } from '../../services/developer-service';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-logs',
-  imports: [CommonModule, FormsModule,NgIcon],
+  imports: [CommonModule, FormsModule, NgIcon, RouterLink],
   viewProviders:[provideIcons({ionLogOutOutline,ionDownloadOutline,ionSearch,ionMenu })],
   templateUrl: './logs.html',
   styleUrl: './logs.css',
@@ -37,9 +38,14 @@ export class Logs implements OnInit,OnDestroy{
     private authCodeService: AuthCodeService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
-  ngOnInit(): void {
+  
+    ngOnInit(): void {
       if (isPlatformBrowser(this.platformId)) {
         this.authCodeService.startSessionTimer();
+        const today = dayjs().format('YYYY-MM-DD');
+        this.startDate = today;
+        this.endDate = today;
+        this.onDateChange();
       }
     }
   
@@ -83,18 +89,39 @@ export class Logs implements OnInit,OnDestroy{
       this.totalLogsCount = 0;
     }
 
+    //obtener clase CSS según el nivel de log
+    getLogLevelClass(logLevel: string): string {
+      switch (logLevel) {
+        case 'INF':
+          return 'bg-blue-500 text-white';
+        case 'DBG':
+          return 'bg-gray-500 text-white';
+        case 'WRN':
+          return 'bg-yellow-500 text-black';
+        case 'ERR':
+          return 'bg-red-500 text-white';
+        case 'CRT':
+          return 'bg-purple-600 text-white';
+        case 'FTL':
+          return 'bg-black text-white border border-red-600';
+        default:
+          return 'bg-gray-400 text-white';
+       }
+     }
+
     //cargar logs para una página específica
     loadLogsForPage(page: number): void {
       if (!this.startDate || !this.endDate) return;
       
       this.loading = true;
-      this.logsService.getLogsByPage(this.startDate, this.endDate, page)
+      this.logsService.getLogs(this.startDate, this.endDate, page)
         .subscribe({
           next: (resp) => {
             this.loading = false;
             if (resp && resp.result && resp.data) {
               this.paginatedLogs = (resp.data as any) || [];
               this.currentPage = page;
+              this.selectedPage = page;
               this.error = null;
             } else {
               this.error = resp?.message || 'Error al cargar logs';
@@ -165,8 +192,8 @@ export class Logs implements OnInit,OnDestroy{
       
       const dataToExport = this.paginatedLogs.map((log: any) => ({
         'id': log.id,
-        'date': log.date,
         'time': log.time,
+        'date': log.date,
         'logLevel': log.logLevel,
         'content': log.content,
       }));
@@ -176,45 +203,25 @@ export class Logs implements OnInit,OnDestroy{
   
       // Ajustar el ancho de las columnas
       const columnWidths = [
-        { wch: 35 }, 
-        { wch: 20 }, 
+        { wch: 15 }, 
+        { wch: 25 }, 
         { wch: 25 },
-        { wch: 25 },
-        { wch: 25 },  
+        { wch: 20 },
+        { wch: 60 },  
       ];
       worksheet['!cols'] = columnWidths;
   
       // Crear un libro de trabajo
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Logs de Usuarios');
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Logs');
   
       // Generar el nombre del archivo con la fecha actual
-      const fileName = `logs_usuarios_${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.xlsx`;
+      const fileName = `logs_${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.xlsx`;
   
       // Descargar el archivo
       XLSX.writeFile(workbook, fileName);
     }
   
-  //obtener clase CSS según el nivel de log
-  getLogLevelClass(logLevel: string): string {
-    switch (logLevel) {
-      case 'INF':
-        return 'bg-blue-500 text-white';
-      case 'DBG':
-        return 'bg-gray-500 text-white';
-      case 'WRN':
-        return 'bg-yellow-500 text-black';
-      case 'ERR':
-        return 'bg-red-500 text-white';
-      case 'CRT':
-        return 'bg-purple-600 text-white';
-      case 'FTL':
-        return 'bg-black text-white border border-red-600';
-      default:
-        return 'bg-gray-400 text-white';
-    }
-  }
-
   //cerrar sesión
   public logout(): void {
     this.authCodeService.logoutAndRedirect();

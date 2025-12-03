@@ -48,7 +48,7 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
     
     this.loading = true;
-    this.pollingSubscription = interval(3000)
+    this.pollingSubscription = interval(6000)
       .pipe(
         startWith(0),
         switchMap(() => this.logsService.getLogsUsers())
