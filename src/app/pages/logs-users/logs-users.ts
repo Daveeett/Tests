@@ -16,7 +16,7 @@ dayjs.extend(isBetween);
 
 @Component({
   selector: 'app-logs-users',
-  imports: [CommonModule, FormsModule,NgIcon],
+  imports: [CommonModule, FormsModule, NgIcon],
   viewProviders:[provideIcons({ionLogOutOutline,ionDownloadOutline,ionSearch })],
   templateUrl: './logs-users.html',
   styleUrl: './logs-users.css',

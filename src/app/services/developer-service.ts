@@ -10,6 +10,7 @@ import { AnyCatcher } from 'rxjs/internal/AnyCatcher';
 import { LogsUsersResponse } from '../interfaces/Responses/LogsUsers/logs-users-response';
 import { LogsResponse } from '../interfaces/Responses/Logs/logs-responses';
 import { LogsPaginationResponse } from '../interfaces/Responses/Logs/logs-pagination-response';
+import { TenantsResponse } from '../interfaces/Responses/Tenants/tenants-response';
 
 @Injectable({
   providedIn: 'root',
@@ -50,7 +51,7 @@ export class DeveloperService {
 
   //consumir el endpoint getlogs (trae una lista de los logs de los usuarios que inician sesion)    
   public getLogsUsers(): Observable<IBaseResponse<LogsUsersResponse>> {
-    const url = this.api.url(`${this.developerBase}/getlogsusers`);
+    const url = this.api.url(`${this.developerBase}/logsusers`);
     return this.http.get<IBaseResponse<LogsUsersResponse>>(
       url,
     );
@@ -79,6 +80,13 @@ export class DeveloperService {
           .set('FromDate', startDate)
           .set('ToDate', endDate)
       }
+    );
+  }
+
+  public getAllTenants(): Observable<IBaseResponse<TenantsResponse[]>> {
+    const url = this.api.url(`${this.developerBase}/getalltenant`);
+    return this.http.get<IBaseResponse<TenantsResponse[]>>(
+      url,
     );
   }
 

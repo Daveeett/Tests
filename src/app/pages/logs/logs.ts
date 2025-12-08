@@ -9,11 +9,9 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   ionLogOutOutline,ionDownloadOutline,ionSearch,ionMenu} from '@ng-icons/ionicons';
 import { DeveloperService } from '../../services/developer-service';
-import { RouterLink } from "@angular/router";
-
 @Component({
   selector: 'app-logs',
-  imports: [CommonModule, FormsModule, NgIcon, RouterLink],
+  imports: [CommonModule, FormsModule, NgIcon],
   viewProviders:[provideIcons({ionLogOutOutline,ionDownloadOutline,ionSearch,ionMenu })],
   templateUrl: './logs.html',
   styleUrl: './logs.css',

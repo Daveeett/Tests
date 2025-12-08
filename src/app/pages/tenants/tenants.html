@@ -1,0 +1,41 @@
+<div id="logsUsersTable" class="overflow-x-auto p-10">
+  
+  <div class="flex justify-between items-center mb-5">
+    <h1 class="text-4xl font-bold text-info-content">Tenants</h1>
+  </div>
+
+    <table class="table table-md w-full">
+    <thead>
+      <tr>
+        <th class="text-2xl text-info-content text-center">ID</th>
+        <th class="text-2xl text-info-content ">Nombre</th>
+        <th class="text-2xl text-info-content ">Dominio</th>
+        <th class="text-2xl text-info-content text-center">Schema</th>
+        <th class="text-2xl text-info-content text-center">Estado</th>
+        <th class="text-2xl text-info-content text-center">Plan</th>
+        <th class="text-2xl text-info-content text-center">Creado</th>
+        <th class="text-2xl text-info-content text-center">Actualizado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tenant of paginatedTenants; let i = index">
+        <td class="text-xl text-center">{{ tenant.tenantId }}</td>
+        <td class="text-xl ">{{ tenant.enterpriseName }}</td>
+        <td class="text-xl ">{{ tenant.domain }}</td>
+        <td class="text-xl text-center">{{ tenant.schemaName }}</td>
+        <td class="text-xl text-center">
+          <span class="badge" [class.badge-info]="tenant.isActive" [class.badge-error]="!tenant.isActive">
+            {{ tenant.isActive ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+        <td class="text-xl text-center"><span class="badge" [class.badge-success]="tenant.plan.showName=='Free'" [class.badge-error]="tenant.plan.showName=='Premium'">{{tenant.plan.showName }}</span></td>
+        <td class="text-xl text-center">{{ formatDate(tenant.createdAt) }}</td>
+        <td class="text-xl text-center">{{ formatDate(tenant.updatedAt) }}</td>
+      </tr>
+    </tbody>
+   </table>
+
+
+
+
+</div>

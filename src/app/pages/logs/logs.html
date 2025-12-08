@@ -1,40 +1,20 @@
-<div id="logsUsersTable" class="overflow-x-auto p-10">
+<div id="logsTable" class="overflow-x-auto p-10 ">
+    
   
-  <div class="flex justify-between items-center mb-5">
-    <h1 class="text-4xl font-bold text-info-content">Logs</h1>
+  <div class="flex justify-between items-center gap-5">
+    <h1 class="text-4xl font-bold text-info-content ">Logs</h1>
     
     <div class="flex gap-3">
       <button (click)="exportToExcel()" class="btn bg-green-600 text-white border-none hover:bg-green-700 btn-md btn-outline gap-2">
         <ng-icon class="text-xl gap-2" name="ionDownloadOutline"></ng-icon>
         Exportar a Excel
       </button>
-      <button (click)="logout()" class="btn bg-gray-600 text-white border-none hover:bg-gray-800 btn-md btn-outline gap-2">
-
-          <ng-icon class="text-xl gap-2" name="ionLogOutOutline"></ng-icon>
-        Log out
-      </button>
-
-      <div class="drawer">
-        <input id="my-drawer-1" type="checkbox" class="drawer-toggle" />
-        <div class="drawer-content">
-          <label for="my-drawer-1" class="btn drawer-button text-3xl "> ≡</label>
-        </div>
-        <div class="drawer-side">
-          <label for="my-drawer-1" aria-label="close sidebar" class="drawer-overlay "></label>
-          <ul class="menu bg-base-200 min-h-full w-80 p-5 gap-3 ">
-           <li class="text-2xl font-bold border-b-1 border-gray-300" ><a [routerLink]="'/tests'">Tests</a></li>
-           <li class="text-2xl font-bold border-b-1 border-gray-300"><a [routerLink]="'/logs-users'">Logs Users</a></li>
-           <li class="text-2xl font-bold border-b-1 border-gray-300"><a [routerLink]="'/prueba'">Prueba</a></li>
-          </ul>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <div class="mb-5 space-y-4">
+  <div class=" p-5">
 
-    <div class="flex flex-wrap gap-3 mt-6 items-end">
+    <div class="flex flex-wrap items-end">
       <div class="flex gap-2 items-end">
         <label class="form-control">
           <div class="label">
@@ -61,7 +41,7 @@
         </label>
       </div>
       <select 
-        class="select select-sm w-40" 
+        class="select select-sm w-40 ml-3" 
         [(ngModel)]="selectedPage" 
         (change)="onPageSelect($event)"
         [disabled]="availablePages.length === 0"
@@ -75,7 +55,7 @@
       <div class="flex gap-2">
         <button 
           (click)="clearDateFilters()" 
-          class="btn btn-sm bg-gray-600 text-white border-none hover:bg-gray-700"
+          class="btn btn-sm bg-gray-600 text-white ml-3 border-none hover:bg-gray-700"
         >
           Limpiar filtros
         </button>

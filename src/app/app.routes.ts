@@ -5,6 +5,7 @@ import { LogsUsers } from './pages/logs-users/logs-users';
 import { AuthGuard } from './guards/auth.guard';
 import { Prueba } from './pages/prueba/prueba';
 import { Logs } from './pages/logs/logs';
+import { Tenants } from './pages/tenants/tenants';
 
 export const routes: Routes = [
   { path: 'login-developer', component: LoginDeveloper },
@@ -12,6 +13,7 @@ export const routes: Routes = [
   { path: 'logs-users', component: LogsUsers, canActivate: [AuthGuard]  },
   { path: 'prueba',component:Prueba,canActivate:[AuthGuard]},
   { path: 'logs',component:Logs,canActivate:[AuthGuard]},
+  { path: 'tenants',component:Tenants,canActivate:[AuthGuard]},
   { path: '', redirectTo: 'login-developer', pathMatch: 'full' },
   { path: '**', redirectTo: '' }
 ];
