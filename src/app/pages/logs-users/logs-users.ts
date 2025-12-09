@@ -3,21 +3,18 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
-import { AuthCodeService } from '../../services/auth-code.service';
-import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
-import * as XLSX from 'xlsx';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import {
-  ionLogOutOutline,ionDownloadOutline,ionSearch} from '@ng-icons/ionicons';
-import { DeveloperService } from '../../services/developer-service';
-
-dayjs.extend(isBetween);
+import { ionLogOutOutline, ionDownloadOutline, ionSearch } from '@ng-icons/ionicons';
+import { LogsService } from '../../core/services/Developer/logs.service';
+import { DateUtilsService } from '../../core/services/Developer/date-utils.service';
+import { ExcelExportService } from '../../core/services/Developer/excel-export.service';
+import { AuthCodeService } from '../../services/auth-code.service';
+import { POLLING_CONFIG, PAGINATION_CONFIG } from '../../core/constants/app.constants';
 
 @Component({
   selector: 'app-logs-users',
   imports: [CommonModule, FormsModule, NgIcon],
-  viewProviders:[provideIcons({ionLogOutOutline,ionDownloadOutline,ionSearch })],
+  viewProviders: [provideIcons({ ionLogOutOutline, ionDownloadOutline, ionSearch })],
   templateUrl: './logs-users.html',
   styleUrl: './logs-users.css',
 })
@@ -29,7 +26,7 @@ export class LogsUsers implements OnInit, OnDestroy {
   startDate: string = '';
   endDate: string = '';
   currentPage = 1;
-  itemsPerPage = 10;
+  itemsPerPage = PAGINATION_CONFIG.DEFAULT_ITEMS_PER_PAGE;
   totalPages = 1;
   loading = false;
   error: string | null = null;
@@ -37,8 +34,10 @@ export class LogsUsers implements OnInit, OnDestroy {
   private pollingSubscription?: Subscription;
 
   constructor(
-    private logsService: DeveloperService,
+    private logsService: LogsService,
     private authCodeService: AuthCodeService,
+    private dateUtils: DateUtilsService,
+    private excelExport: ExcelExportService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -46,9 +45,9 @@ export class LogsUsers implements OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       this.authCodeService.startSessionTimer();
     }
-    
+
     this.loading = true;
-    this.pollingSubscription = interval(6000)
+    this.pollingSubscription = interval(POLLING_CONFIG.LOGS_USERS_INTERVAL)
       .pipe(
         startWith(0),
         switchMap(() => this.logsService.getLogsUsers())
@@ -67,116 +66,100 @@ export class LogsUsers implements OnInit, OnDestroy {
         error: (err) => {
           this.loading = false;
           this.error = err?.message || String(err);
-        }
+        },
       });
   }
 
   ngOnDestroy(): void {
     this.pollingSubscription?.unsubscribe();
   }
-  
-  //filtrar logs por nombre de usuario y rango de fechas
+
+  // Filtra los logs por nombre de usuario y rango de fecha
   applyFilter(resetPage: boolean = false): void {
     let filtered = [...this.logs];
-    
-    // Filtrar por nombre de usuario
-    if(this.searchTerm && this.searchTerm.trim()!==''){
-      const searchLover = this.searchTerm.toLowerCase().trim();
-      filtered= filtered.filter(log=>
-        log.userName.toLowerCase().includes(searchLover)
 
-      )
+    // Filtra por nombre de usuario
+    if (this.searchTerm && this.searchTerm.trim() !== '') {
+      const searchLower = this.searchTerm.toLowerCase().trim();
+      filtered = filtered.filter((log) => log.userName.toLowerCase().includes(searchLower));
+    }
 
+    // Filtra por rango de fecha
+    if (this.startDate || this.endDate) {
+      filtered = this.dateUtils.filterByDateRange(
+        filtered,
+        (log) => log.loginTime,
+        this.startDate,
+        this.endDate
+      );
     }
-    
-    // Filtrar por rango de fechas
-    if(this.startDate||this.endDate){
-      filtered= filtered.filter(log=>{
-        const logDate= dayjs(log.loginTime);
-        //solo hay fecha de inicio
-        if(this.startDate && !this.endDate){
-          return logDate.isAfter(dayjs(this.startDate).startOf('day'))||
-                  logDate.isSame(dayjs(this.startDate).startOf('day'));
-        }
-        //solo hay fecha de fin
-        if(!this.startDate && this.endDate){
-          return logDate.isBefore(dayjs(this.endDate).endOf('day'))||
-                  logDate.isSame(dayjs(this.endDate).endOf('day'));
-        }
-        //hay fecha de inicio y fecha de fin
-        if(this.startDate && this.endDate){
-          return logDate.isBetween(dayjs(this.startDate).startOf('day'),dayjs(this.endDate).endOf('day'));
-        }
-        return true;
-      })
-    }
-    this.filteredLogs= filtered;
-    this.totalPages= Math.ceil(this.filteredLogs.length / this.itemsPerPage);
 
-    // Solo resetear a la primera página si se solicita explícitamente (cuando el usuario busca)
-    if(resetPage || this.currentPage>this.totalPages){
-      this.currentPage= this.totalPages>0? Math.min(this.currentPage,this.totalPages):1;
+    this.filteredLogs = filtered;
+    this.totalPages = Math.ceil(this.filteredLogs.length / this.itemsPerPage);
+
+    // Reinicia la página actual si se requiere o si la página actual excede el número total de páginas
+    if (resetPage || this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages > 0 ? Math.min(this.currentPage, this.totalPages) : 1;
     }
-    
-    
+
     this.updatePaginatedLogs();
   }
 
-  //manejar cambios en el input de búsqueda
+  // Maneja los cambios en el campo de búsqueda
   onSearchChange(): void {
-    this.applyFilter(true); // Resetear a página 1 cuando el usuario busca
+    this.applyFilter(true);
   }
 
-  //manejar cambios en las fechas
+  // Maneja los cambios en las fechas
   onDateChange(): void {
-    this.applyFilter(true); // Resetear a página 1 cuando cambian las fechas
+    this.applyFilter(true);
   }
 
-  //filtro rápido: hoy
+  // Filtro rápido: hoy
   filterToday(): void {
-    const today = dayjs().format('YYYY-MM-DD');
+    const today = this.dateUtils.getTodayFormatted();
     this.startDate = today;
     this.endDate = today;
     this.applyFilter(true);
   }
 
-  //filtro rápido: últimos 7  días
+  // Filtro rápido: últimos 7 días
   filterLastWeek(): void {
-    this.startDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
-    this.endDate = dayjs().format('YYYY-MM-DD');
+    this.startDate = this.dateUtils.getDaysAgoFormatted(7);
+    this.endDate = this.dateUtils.getTodayFormatted();
     this.applyFilter(true);
   }
 
-  //filtro rápido: últimos 30 días
+  // Filtro rápido: últimos 30 días
   filterLast30Days(): void {
-    this.startDate = dayjs().subtract(30, 'day').format('YYYY-MM-DD');
-    this.endDate = dayjs().format('YYYY-MM-DD');
+    this.startDate = this.dateUtils.getDaysAgoFormatted(30);
+    this.endDate = this.dateUtils.getTodayFormatted();
     this.applyFilter(true);
   }
 
-  //limpiar filtros de fecha
+  // Limpia los filtros de fecha
   clearDateFilters(): void {
     this.startDate = '';
     this.endDate = '';
     this.applyFilter(true);
   }
 
-  //actualizar paginas de los logs
+  // Actualiza los logs paginados basados en la página actual
   updatePaginatedLogs(): void {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedLogs = this.filteredLogs.slice(startIndex, endIndex);
   }
 
-  //siguiente pagina de los logs
+  // Navega a la página siguiente
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
       this.updatePaginatedLogs();
     }
   }
-  
-  //pagina anterior de los logs
+
+  // Navega a la página anterior
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
@@ -184,7 +167,7 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
   }
 
-  //Ir a la pagina seleccionada
+  // Navega a una página específica
   goToPage(page: number | string): void {
     if (typeof page !== 'number') return;
     if (page >= 1 && page <= this.totalPages) {
@@ -193,7 +176,7 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
   }
 
-  //obtener número de páginas
+  // Obtiene los números de página para la paginación
   getPageNumbers(): (number | string)[] {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
@@ -214,40 +197,9 @@ export class LogsUsers implements OnInit, OnDestroy {
     return pages;
   }
 
-  //exportar logs a Excel
+  // Exporta los logs de los usuarios a Excel
   exportToExcel(): void {
-    
-    const dataToExport = this.filteredLogs.map(log => ({
-      'Usuario': log.userName,
-      'IP': log.userIp,
-      'Fecha y Hora de Login': dayjs(log.loginTime).format('DD/MM/YYYY HH:mm:ss')
-    }));
-
-    // Crear una hoja 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-
-    // Ajustar el ancho de las columnas
-    const columnWidths = [
-      { wch: 35 }, 
-      { wch: 20 }, 
-      { wch: 25 }  
-    ];
-    worksheet['!cols'] = columnWidths;
-
-    // Crear un libro de trabajo
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Logs de Usuarios');
-
-    // Generar el nombre del archivo con la fecha actual
-    const fileName = `logs_usuarios_${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.xlsx`;
-
-    // Descargar el archivo
-    XLSX.writeFile(workbook, fileName);
-  }
-
-  //cerrar sesión
-  public logout(): void {
-    this.authCodeService.logoutAndRedirect();
+    this.excelExport.exportUserLogs(this.filteredLogs);
   }
 
 }

@@ -15,6 +15,7 @@
         <th class="text-2xl text-info-content text-center">Plan</th>
         <th class="text-2xl text-info-content text-center">Creado</th>
         <th class="text-2xl text-info-content text-center">Actualizado</th>
+        <th class="text-2xl text-info-content text-center">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -31,11 +32,22 @@
         <td class="text-xl text-center"><span class="badge" [class.badge-success]="tenant.plan.showName=='Free'" [class.badge-error]="tenant.plan.showName=='Premium'">{{tenant.plan.showName }}</span></td>
         <td class="text-xl text-center">{{ formatDate(tenant.createdAt) }}</td>
         <td class="text-xl text-center">{{ formatDate(tenant.updatedAt) }}</td>
+        <td class="text-xl text-center">
+          <button class="btn bg-amber-400 btn-md text-xl" (click)="openModalUpdate(tenant)">
+            <ng-icon name="ionPencil"></ng-icon>
+          </button>
+        </td>
       </tr>
     </tbody>
    </table>
 
 
-
+<!-- Modal de actualización -->
+<app-modal-update 
+  [tenant]="selectedTenant"
+  [availablePlans]="availablePlans"
+  (tenantUpdated)="onTenantUpdated($event)"
+  (modalClosed)="onModalClosed()"
+></app-modal-update>
 
 </div>
