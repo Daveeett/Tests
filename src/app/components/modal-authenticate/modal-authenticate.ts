@@ -1,15 +1,14 @@
 import { Component, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
-import { DeveloperService } from '../../services/developer-service';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { ionSendOutline } from '@ng-icons/ionicons';
+import { AuthService } from '../../core/services/Developer/auth.service';
 import { AuthCodeService } from '../../services/auth-code.service';
 import { ValidateCodeRequest } from '../../interfaces/Requests/Developer/validate-code-request';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import {
-  ionSendOutline} from '@ng-icons/ionicons';
 
 @Component({
   selector: 'app-modal-authenticate',
   imports: [NgIcon],
-  viewProviders:[provideIcons({ionSendOutline })],
+  viewProviders: [provideIcons({ ionSendOutline })],
   templateUrl: './modal-authenticate.html',
   styleUrl: './modal-authenticate.css',
 })
@@ -20,9 +19,14 @@ export class ModalAuthenticate {
 
   private currentEmail: string = '';
 
-  constructor(private developerService: DeveloperService, private authCodeService: AuthCodeService) {}
+  constructor(
+    private authService: AuthService,
+    private authCodeService: AuthCodeService
+  ) {}
 
-  //Abre el modal
+  /**
+   * Open the modal and send authentication code
+   */
   public open(email: string) {
     this.currentEmail = email;
 
@@ -35,7 +39,9 @@ export class ModalAuthenticate {
     this.modalRef.nativeElement.showModal();
   }
 
-  //restablece la ui
+  /**
+   * Reset UI state
+   */
   private resetUI() {
     const errorEl = this.modalRef.nativeElement.querySelector('#codeError');
     if (errorEl) {
@@ -48,23 +54,25 @@ export class ModalAuthenticate {
     }
   }
 
-  //envia el codigo de autenticacion
+  /**
+   * Send authentication code to user's email
+   */
   private sendAuthenticationCode() {
-    this.developerService.sendAuthenticationCode({ EmailAddress: this.currentEmail })
-      .subscribe({
-        next: (response) => {
-          console.log("Code Sended");
-          if (!response.result) {
-            console.error('Error sending authentication code:', response.message);
-          }
-        },
-        error: (error) => {
-          console.error('Error sending authentication code:', error);
+    this.authService.sendAuthenticationCode({ EmailAddress: this.currentEmail }).subscribe({
+      next: (response) => {
+        if (!response.result) {
+          console.error('Error sending authentication code:', response.message);
         }
-      });
+      },
+      error: (error) => {
+        console.error('Error sending authentication code:', error);
+      },
+    });
   }
 
-  //Verifica el codigo de autenticacion
+  /**
+   * Verify the authentication code entered by user
+   */
   public verify() {
     const input = this.modalRef.nativeElement.querySelector('#authCode') as HTMLInputElement;
     const code = input?.value?.trim() || '';
@@ -75,33 +83,32 @@ export class ModalAuthenticate {
       return;
     }
 
-    const request: ValidateCodeRequest = { 
+    const request: ValidateCodeRequest = {
       AuthenticationCode: code,
     };
 
-    this.developerService.verifyAuthenticationCode(request)
-      .subscribe({
-        next: (response) => {
-          if (response.result) {
-            console.log("Verification Success");
-            // Guardar código en localStorage para que AuthGuard permita el acceso
-            this.authCodeService.saveAuthCode(code);
-            this.modalRef.nativeElement.close();
-            this.verified.emit();
-          } else {
-            errorEl?.classList.remove('hidden');
-          }
-        },
-        error: (error) => {
-          console.error('Error verifying code:', error);
+    this.authService.verifyAuthenticationCode(request).subscribe({
+      next: (response) => {
+        if (response.result) {
+          // Save code to localStorage so AuthGuard allows access
+          this.authCodeService.saveAuthCode(code);
+          this.modalRef.nativeElement.close();
+          this.verified.emit();
+        } else {
           errorEl?.classList.remove('hidden');
         }
-      });
+      },
+      error: (error) => {
+        console.error('Error verifying code:', error);
+        errorEl?.classList.remove('hidden');
+      },
+    });
   }
 
-  //Cierra el modal
+  /**
+   * Close the modal
+   */
   public cancel() {
     this.modalRef.nativeElement.close();
   }
 }
-

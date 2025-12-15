@@ -1,0 +1,25 @@
+<div id="plansTable" class="overflow-x-auto p-10">
+  
+  <div class="flex justify-between items-center mb-5">
+    <h1 class="text-4xl font-bold text-info-content">Planes</h1>
+  </div>
+
+    <table class="table table-md w-full">
+    <thead>
+      <tr>
+        <th class="text-2xl text-info-content text-center">ID</th>
+        <th class="text-2xl text-info-content ">Nombre</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let plan of plans; let i = index">
+        <td class="text-xl text-center">{{ plan.planId }}</td>
+        <td class="text-xl ">{{ plan.showName }}</td>
+      </tr>
+    </tbody>
+   </table>
+
+
+
+
+</div>

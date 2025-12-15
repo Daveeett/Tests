@@ -1,91 +1,85 @@
-
-import { Time } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { SESSION_CONFIG, STORAGE_KEYS } from '../core/constants/app.constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthCodeService {
+  private sessionTimer: any = null;
 
-  private readonly AUTH_CODE_KEY = 'authCode';
-  private readonly AUTH_CODE_EXPIRY_KEY = 'authCodeExpiry';
-  private readonly CODE_EXPIRY_TIME = 1 * 60 * 60 * 2000; 
-  private sesionTimer:any=null;
+  constructor(private router: Router) {}
 
-  constructor(private router:Router) {}
-
-  //empezar contador de tiempo, verificar si la sesion es valida y redigir cuando la sesion expira
+  // Inicia el temporizador de sesion
   public startSessionTimer(): void {
-    if (this.sesionTimer) clearInterval(this.sesionTimer);
-    this.sesionTimer = setInterval(() => {
+    if (this.sessionTimer) {
+      clearInterval(this.sessionTimer);
+    }
+    
+    this.sessionTimer = setInterval(() => {
       if (!this.isSessionValid()) {
         this.clearAuthCode();
         console.warn('Su sesión ha expirado, redirigiendo al login');
-        clearInterval(this.sesionTimer);
+        clearInterval(this.sessionTimer);
         this.router.navigateByUrl('/login-developer');
       }
-    }, 2000);
+    }, SESSION_CONFIG.CHECK_INTERVAL);
   }
 
-  //funcion para verificar que la sesion sea válida
+  // Verifica si la sesion es valida
   public isSessionValid(): boolean {
     if (!this.isLocalStorageAvailable()) {
       return false;
     }
-    const expiry = localStorage.getItem(this.AUTH_CODE_EXPIRY_KEY);
+    
+    const expiry = localStorage.getItem(STORAGE_KEYS.AUTH_CODE_EXPIRY);
     if (!expiry) {
       return false;
     }
+    
     const expiryTime = parseInt(expiry, 10);
     const currentTime = new Date().getTime();
     const isValid = currentTime < expiryTime;
-    //muestra el tiempo restante de la sesion
-    console.log('[AuthCodeService] Validation result:', {
-      expiryTime,
-      currentTime,
-      difference: expiryTime - currentTime,
-      isValid
-    });
+    
     return isValid;
   }
   
-  //guardar el codigo de autenticacion
+  //Guarda el codigo de autenticacion en localStorage
   public saveAuthCode(code: string): void {
-    //log que muestra el codigo que se guardó
-    console.log('[AuthCodeService] saveAuthCode called with code:', code);
     if (!this.isLocalStorageAvailable()) {
       console.error('[AuthCodeService] localStorage not available, cannot save code');
       return;
     }
-    const expiryTime = new Date().getTime() + this.CODE_EXPIRY_TIME;
-    localStorage.setItem(this.AUTH_CODE_KEY, code);
-    localStorage.setItem(this.AUTH_CODE_EXPIRY_KEY, expiryTime.toString());
+    
+    const expiryTime = new Date().getTime() + SESSION_CONFIG.EXPIRY_TIME;
+    localStorage.setItem(STORAGE_KEYS.AUTH_CODE, code);
+    localStorage.setItem(STORAGE_KEYS.AUTH_CODE_EXPIRY, expiryTime.toString());
   }
    
-  //verificar que el localstorage esté dispoible
+  // Verifica si localStorage esta disponible (maneja SSR)
   private isLocalStorageAvailable(): boolean {
-        if (typeof localStorage === 'undefined') {
-            return false;
-        }
-        try {
-            const testKey = '__test__';
-            localStorage.setItem(testKey, 'test');
-            localStorage.removeItem(testKey);
-            return true;
-        } catch (e) {
-            return false;
-        }
+    if (typeof localStorage === 'undefined') {
+      return false;
     }
+    
+    try {
+      const testKey = '__test__';
+      localStorage.setItem(testKey, 'test');
+      localStorage.removeItem(testKey);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
-  //obtener el authcode    
+  //Obtiene el codigo de autenticacion de localStorage
   public getAuthCode(): string | null {
     if (!this.isLocalStorageAvailable()) {
       return null;
     }
 
-    const code = localStorage.getItem(this.AUTH_CODE_KEY);
-    const expiry = localStorage.getItem(this.AUTH_CODE_EXPIRY_KEY);
+    const code = localStorage.getItem(STORAGE_KEYS.AUTH_CODE);
+    const expiry = localStorage.getItem(STORAGE_KEYS.AUTH_CODE_EXPIRY);
 
     if (!code || !expiry) {
       return null;
@@ -93,14 +87,15 @@ export class AuthCodeService {
 
     const expiryTime = parseInt(expiry, 10);
     const currentTime = new Date().getTime();
-    //verificacion que el tiempo de sesion no exceda el tiempo transcurrido
+    
     if (currentTime > expiryTime) {
       this.clearAuthCode();
       console.warn('El código de autenticación ha expirado');
       return null;
     }
+    
     return code;
-    }
+  }
 
   
   public hasValidAuthCode(): boolean {
@@ -110,11 +105,18 @@ export class AuthCodeService {
     return this.getAuthCode() !== null;
   }
 
-  //funcion para obtener el tiempo restante de la sesion
+  /**
+   * Obtiene el tiempo restante de la sesion en segundos
+   */
   public getRemainingTime(): number {
-    if (!this.isLocalStorageAvailable()) return 0;
-    const expiry = localStorage.getItem(this.AUTH_CODE_EXPIRY_KEY);
-    if (!expiry) return 0;
+    if (!this.isLocalStorageAvailable()) {
+      return 0;
+    }
+    
+    const expiry = localStorage.getItem(STORAGE_KEYS.AUTH_CODE_EXPIRY);
+    if (!expiry) {
+      return 0;
+    }
 
     const expiryTime = parseInt(expiry, 10);
     const currentTime = new Date().getTime();
@@ -123,12 +125,13 @@ export class AuthCodeService {
     return remaining > 0 ? remaining : 0;
   }
 
-  //funcion para limpiar el authcode
+  /**
+   * Limpia el codigo de autenticacion de localStorage
+   */
   public clearAuthCode(): void {
     if (this.isLocalStorageAvailable()) {
-      localStorage.removeItem(this.AUTH_CODE_KEY);
-      localStorage.removeItem(this.AUTH_CODE_EXPIRY_KEY);
-      console.log('Código de autenticación limpiado');
+      localStorage.removeItem(STORAGE_KEYS.AUTH_CODE);
+      localStorage.removeItem(STORAGE_KEYS.AUTH_CODE_EXPIRY);
     }
   }
 
@@ -140,16 +143,20 @@ export class AuthCodeService {
     
   }
 
-  //cerrar sesion y redirigir al login
+  /**
+   * Cierra la sesion y redirecciona al login
+   */
   public logoutAndRedirect(): void {
-    // detiene el contador
-    if (this.sesionTimer) {
-      clearInterval(this.sesionTimer);
-      this.sesionTimer = null;
+    // Stop session timer
+    if (this.sessionTimer) {
+      clearInterval(this.sessionTimer);
+      this.sessionTimer = null;
     }
-    // limpia el authcode del localStorage
+    
+    // Limpia el codigo de autenticacion
     this.clearAuthCode();
-    // redirige a login 
+    
+    // Redirecciona al login
     this.router.navigateByUrl('/login-developer');
   }
 }

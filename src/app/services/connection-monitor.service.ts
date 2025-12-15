@@ -3,7 +3,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { interval, Subscription } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { Ping } from './ping';
+import { Ping } from './ping.service';
+import { CONNECTION_CONFIG } from '../core/constants/app.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -17,26 +18,23 @@ export class ConnectionMonitorService {
   private onConnectionLostCallback?: () => void;
   private onConnectionRestoredCallback?: () => void;
 
-  //Inicia el monitoreo de conexión
+  // Empieza el monitoreo de la conexion
   public startMonitoring(): void {
-    // Solo ejecutar en el browser
+    // Solo ejecuta en el navegador
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
-    // Si ya está monitoreando no inicia de nuevo
+    // No empieza si ya esta monitoreando
     if (this.monitoringSubscription) {
       return;
     }
 
-    console.log('Iniciando monitoreo de conexión...');
-
-    this.monitoringSubscription = interval(1*10*10*1000)
+    this.monitoringSubscription = interval(CONNECTION_CONFIG.PING_INTERVAL)
       .pipe(
         switchMap(() => 
           this.pingService.ping().pipe(
             catchError((error) => {
-              // Si hay error en el ping, retornar un observable con resultado falso
               console.error('Error en ping:', error);
               return of({ result: false, data: null, message: 'Connection failed' });
             })
@@ -48,13 +46,11 @@ export class ConnectionMonitorService {
           const wasConnected = this.isConnected;
           this.isConnected = response.result === true;
 
-          // Detectar cambio de estado
+          // Detecta cambios en el estado de la conexión
           if (wasConnected && !this.isConnected) {
-            // Conexión perdida
             console.warn('Conexión perdida con el backend');
             this.onConnectionLostCallback?.();
           } else if (!wasConnected && this.isConnected) {
-            // Conexión restaurada
             console.log('Conexión restaurada con el backend');
             this.onConnectionRestoredCallback?.();
           }
@@ -69,7 +65,7 @@ export class ConnectionMonitorService {
       });
   }
 
-  //Detiene el monitoreo de conexión
+  // Detiene el monitoreo de la conexion
   public stopMonitoring(): void {
     if (this.monitoringSubscription) {
       this.monitoringSubscription.unsubscribe();
@@ -77,18 +73,17 @@ export class ConnectionMonitorService {
     }
   }
 
-  //Registra callback para cuando se pierde la conexión
+  // Registra un callback para el evento de conexión perdida
   public onConnectionLost(callback: () => void): void {
     this.onConnectionLostCallback = callback;
   }
 
-  //Registra callback para cuando se restaura la conexión
-
+  // Registra un callback para el evento de restauracion de la conexion
   public onConnectionRestored(callback: () => void): void {
     this.onConnectionRestoredCallback = callback;
   }
 
-  // Retorna el estado actual de la conexión
+  // Obtiene el estado de la conexion
   public getConnectionStatus(): boolean {
     return this.isConnected;
   }

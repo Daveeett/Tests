@@ -1,5 +1,5 @@
-import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   ionCheckmarkDoneSharp,ionInformationCircleSharp,ionAlertCircleSharp} from '@ng-icons/ionicons';
@@ -17,9 +17,15 @@ export class ToastNotification {
   
   private hideTimeout?: number;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   //Muestra el toast con un mensaje
 
   public show(message: string, type: 'success' | 'error' | 'info' = 'success', duration: number = 4000): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     this.message.set(message);
     this.type.set(type);
     this.isVisible.set(true);

@@ -1,0 +1,97 @@
+<dialog #modalDialog class="modal">
+  <div class="modal-box w-11/12 max-w-3xl">
+    <h3 class="font-bold text-3xl mb-4">Actualizar Tenant</h3>
+    
+    <form [formGroup]="tenantForm" (ngSubmit)="onSubmit()">
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text text-lg">Nombre de Empresa</span>
+        </label>
+        <input 
+          type="text" 
+          formControlName="enterpriseName"
+          placeholder="Nombre de la empresa" 
+          class="input input-bordered w-full mt-2" 
+        />
+        <label class="label" *ngIf="tenantForm.get('enterpriseName')?.invalid && tenantForm.get('enterpriseName')?.touched">
+          <span class="label-text-alt text-error">El nombre de empresa es requerido</span>
+        </label>
+      </div>
+
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text text-lg">Dominio</span>
+        </label>
+        <input 
+          type="text" 
+          formControlName="domain"
+          placeholder="ejemplo.com" 
+          class="input input-bordered w-full mt-2" 
+        />
+        <label class="label" *ngIf="tenantForm.get('domain')?.invalid && tenantForm.get('domain')?.touched">
+          <span class="label-text-alt text-error">El dominio es requerido</span>
+        </label>
+      </div>
+
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text text-lg">Schema</span>
+        </label>
+        <input 
+          type="text" 
+          formControlName="schemaName"
+          placeholder="schema_name" 
+          class="input input-bordered w-full mt-2" 
+        />
+        <label class="label" *ngIf="tenantForm.get('schemaName')?.invalid && tenantForm.get('schemaName')?.touched">
+          <span class="label-text-alt text-error">El schema es requerido</span>
+        </label>
+      </div>
+
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text text-lg">Estado</span>
+        </label>
+        <select formControlName="isActive" class="select select-bordered w-full mt-2">
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">No Activo</option>
+        </select>
+      </div>
+
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text text-lg">Plan</span>
+        </label>
+        <select formControlName="planId" class="select select-bordered w-full mt-2">
+          <option value="" disabled>Seleccionar plan</option>
+          <option *ngFor="let plan of availablePlans" [value]="plan.planId">
+            {{ plan.showName }} - ${{ plan.price }}
+          </option>
+        </select>
+      </div>
+
+      <div class="modal-action">
+        <button 
+          type="button" 
+          class="btn btn-ghost text-lg" 
+          (click)="closeModal()"
+          [disabled]="isSubmitting"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary text-lg"
+          [disabled]="tenantForm.invalid || isSubmitting"
+        >
+          <span *ngIf="!isSubmitting">Actualizar</span>
+          <span *ngIf="isSubmitting" class="loading loading-spinner"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="closeModal()">close</button>
+  </form>
+</dialog>
