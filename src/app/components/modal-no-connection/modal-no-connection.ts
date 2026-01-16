@@ -14,17 +14,13 @@ export class ModalNoConnection {
   @ViewChild('connectionModal') modal!: ElementRef<HTMLDialogElement>;
   @Output() retryConnection = new EventEmitter<void>();
 
-  //Abre el modal
   public open(): void {
     this.modal?.nativeElement.showModal();
   }
 
-  //Cierra el modal
   public close(): void {
     this.modal?.nativeElement.close();
   }
-
-  //Botón de reintentar
   public retry(): void {
     this.retryConnection.emit();
     this.close();

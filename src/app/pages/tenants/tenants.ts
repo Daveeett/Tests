@@ -1,17 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TenantsService } from '../../core/services/Developer/tenants.service';
-import { DateUtilsService } from '../../core/services/Developer/date-utils.service';
-import { AuthCodeService } from '../../services/auth-code.service';
+import { AuthSessionService } from '../../core/services/auth/auth-session.service';
 import { TenantsResponse, Plan } from '../../interfaces/Responses/Developer/Tenants/tenants-response';
 import { NgIcon, provideIcons } from "@ng-icons/core";
-import { ionPencil } from "@ng-icons/ionicons";
+import { ionAdd,ionPencil, ionBusinessOutline,ionIdCardOutline, ionGlobeOutline, ionLayersOutline, ionCheckmarkCircleOutline, ionCardOutline, ionCalendarOutline, ionRefreshOutline, ionSettingsOutline } from "@ng-icons/ionicons";
+import { ModalCreate } from '../../components/tenants/modal-create/modal-create';
 import { ModalUpdate } from '../../components/tenants/modal-update/modal-update';
 
 @Component({
   selector: 'app-tenants',
-  imports: [CommonModule, NgIcon, ModalUpdate],
-  viewProviders: [provideIcons({ ionPencil })],
+  imports: [CommonModule, NgIcon, ModalUpdate, ModalCreate],
+  viewProviders: [provideIcons({ ionAdd,ionPencil, ionBusinessOutline, ionIdCardOutline, ionGlobeOutline, ionLayersOutline, ionCheckmarkCircleOutline, ionCardOutline, ionCalendarOutline, ionRefreshOutline, ionSettingsOutline })],
   templateUrl: './tenants.html',
   styleUrl: './tenants.css',
 })
@@ -22,25 +22,24 @@ export class Tenants implements OnInit {
   availablePlans: Plan[] = [];
 
   @ViewChild(ModalUpdate) modalUpdate!: ModalUpdate;
-
+  @ViewChild(ModalCreate) modalCreate!: ModalCreate;
+  
   constructor(
     private tenantsService: TenantsService,
-    private authCodeService: AuthCodeService,
-    private dateUtils: DateUtilsService
+    private authSessionService: AuthSessionService,
+    
   ) {}
 
   ngOnInit(): void {
     this.loadTenants();
   }
 
-  // Carga todos los tenants
   private loadTenants(): void {
     this.tenantsService.getAllTenants().subscribe({
       next: (response) => {
         if (response && response.data) {
           this.tenants = response.data;
           this.paginatedTenants = response.data;
-          // Extract unique plans from tenants
           this.extractAvailablePlans();
         }
       },
@@ -50,7 +49,6 @@ export class Tenants implements OnInit {
     });
   }
 
-  // Extrae los planes disponibles de los tenants
   private extractAvailablePlans(): void {
     const plansMap = new Map<number, Plan>();
     this.tenants.forEach(tenant => {
@@ -61,39 +59,42 @@ export class Tenants implements OnInit {
     this.availablePlans = Array.from(plansMap.values());
   }
 
-  // Formatea la fecha
   formatDate(dateString: string): string {
-    return this.dateUtils.formatDate(dateString);
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 
-  // Abre el modal de actualización
+  openModalCreate(){
+    this.selectedTenant = null;
+    if (this.modalCreate) {
+      this.modalCreate.openModal();
+    }
+  }
+
   openModalUpdate(tenant: TenantsResponse): void {
     this.selectedTenant = tenant;
-    setTimeout(() => {
+    if (this.modalUpdate) {
       this.modalUpdate.openModal();
-    }, 0);
-  }
-
-  // Maneja la actualización del tenant
-  onTenantUpdated(updatedTenant: TenantsResponse): void {
-    if (updatedTenant) {
-      const index = this.tenants.findIndex(t => t.tenantId === updatedTenant.tenantId);
-      if (index !== -1) {
-        this.tenants[index] = updatedTenant;
-        // Since paginatedTenants might be the same reference or a shallow copy, we update it too if it's different
-        if (this.tenants !== this.paginatedTenants) {
-             const pIndex = this.paginatedTenants.findIndex(t => t.tenantId === updatedTenant.tenantId);
-             if (pIndex !== -1) {
-                 this.paginatedTenants[pIndex] = updatedTenant;
-             }
-        }
-      }
     }
-    this.selectedTenant = null;
   }
 
-  // Maneja el cierre del modal
+  onTenantUpdated(updatedTenant: TenantsResponse): void {
+    this.loadTenants();
+  }
+
   onModalClosed(): void {
     this.selectedTenant = null;
   }
+
+  public logout(): void {
+    this.authSessionService.logoutAndRedirect();
+  }
+
 }

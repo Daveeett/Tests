@@ -1,20 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
   
-  //url base
   public readonly baseUrl = 'http://127.0.0.1:5136/api';
 
   constructor(public http: HttpClient) {}
- 
-  public url(path: string) {
+  public url(path: string): string {
     return `${this.baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
   }
-
-
-} 
+}

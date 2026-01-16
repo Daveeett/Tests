@@ -19,29 +19,23 @@ export class ToastNotification {
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
-  //Muestra el toast con un mensaje
-
   public show(message: string, type: 'success' | 'error' | 'info' = 'success', duration: number = 4000): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
-    }
+      }
 
     this.message.set(message);
     this.type.set(type);
     this.isVisible.set(true);
 
-    // Limpiar timeout anterior si existe
     if (this.hideTimeout) {
       clearTimeout(this.hideTimeout);
     }
-
-    // Auto-ocultar después de la duración especificada
     this.hideTimeout = window.setTimeout(() => {
       this.hide();
     }, duration);
   }
 
-  //Oculta el toast
   public hide(): void {
     this.isVisible.set(false);
     if (this.hideTimeout) {

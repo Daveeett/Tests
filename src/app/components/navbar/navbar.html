@@ -1,20 +1,58 @@
 <div class="drawer">
+        <aside class="flex h-dvh fixed z-40"></aside>
         <input id="my-drawer-1" type="checkbox" class="drawer-toggle " />
-        <div class="drawer-content">
-          <label for="my-drawer-1" class="btn btn-lg drawer-button  bg-blue-700 border-none shadow-none text-white text-4xl "> ≡ </label>
+        <div class="drawer-content ">
+          <label for="my-drawer-1" class="btn btn-md mr-2 font-bold text-xl text-base-content border-none shadow-none bg-transparent hover:bg-transparent"
+          [attr.aria-label]="themeLabel()"> 
+          <ng-icon class="text-3xl font-bold text-base-content" name="ionMenu"></ng-icon> </label>
         </div>
-        <div class="drawer-side">
+        <div class="drawer-side ">
           <label for="my-drawer-1" aria-label="close sidebar" class="drawer-overlay "></label>
-          <ul class="menu bg-blue-700 min-h-full w-60 p-7  ">
-           <li class="text-3xl font-bold text-white"><a [routerLink]="'/logs'">Logs</a></li>
-           <div class="divider"></div>
-           <li class="text-3xl font-bold text-white"><a [routerLink]="'/logs-users'">Logs Users</a></li>
-           <div class="divider"></div>
-           <li class="text-3xl font-bold text-white"><a [routerLink]="'/tenants'">Tenants</a></li>
-           <div class="divider"></div>
-           <li class="text-3xl font-bold text-white"><a [routerLink]="'/plans'">Plans</a></li>
-           <div class="divider"></div>
-           <li class="text-3xl font-bold text-white"><a [routerLink]="'/configuration'">Settings</a></li>
+          
+          <ul class="sidebar-menu drawer-sidebar h-full w-62 flex gap-1  flex-col p-3 overflow-y-auto">
+           <header class="sidebar-header flex justify-between items-center border-b border-gray-200">
+            <img class="logo h-15 w-auto" src="ViamaticaLogo.png" alt="ViaDoc Logo">
+            <label for="my-drawer-1" class="hover:cursor-pointer">
+              <ng-icon name="ionCloseOutline" class="text-2xl"></ng-icon>
+            </label>
+          </header>
+           <li class="text-lg flex items-center rounded px-4 text-base-content hover:bg-base-content hover:text-base-100">
+             <a [routerLink]="'/logs'" class="flex items-center h-15 gap-3 w-full">
+               <ng-icon name="ionDocumentTextOutline" class="text-2xl"></ng-icon>
+               <span class="text-sm">Registros</span>
+             </a>
+           </li>
+           <li class="text-lg flex items-center rounded px-4 text-base-content hover:bg-base-content hover:text-base-100">
+             <a [routerLink]="'/logs-users'" class="flex items-center h-15 gap-3 w-full">
+               <ng-icon name="ionPeopleOutline" class="text-2xl"></ng-icon>
+               <span class="text-sm">Registros de Usuarios</span>
+             </a>
+           </li>
+           <li class="text-lg flex items-center rounded px-4 text-base-content hover:bg-base-content hover:text-base-100 ">
+             <a [routerLink]="'/tenants'" class="flex items-center h-15 gap-3 w-full">
+               <ng-icon name="ionBusinessOutline" class="text-2xl"></ng-icon>
+               <span class="text-sm">Tenants</span>
+             </a>
+           </li>
+           <li class="text-lg flex items-center rounded px-4 text-base-content hover:bg-base-content hover:text-base-100 ">
+             <a [routerLink]="'/plans'" class="flex items-center h-15 gap-3 w-full">
+               <ng-icon name="ionCardOutline" class="text-2xl"></ng-icon>
+               <span class="text-sm">Planes</span>
+             </a>
+           </li>
+           <li class="text-lg flex items-center rounded px-4 text-base-content hover:bg-base-content hover:text-base-100 ">
+             <a [routerLink]="'/configuration'" class="flex items-center h-15 gap-3 w-full">
+               <ng-icon name="ionSettingsOutline" class="text-2xl"></ng-icon>
+               <span class="text-sm">Configuración</span>
+             </a>
+           </li>
+           <div class="flex-grow"></div>
+           <li class="text-lg flex items-center rounded px-4 border-t border-gray-200 text-base-content hover:bg-base-content hover:text-base-100 ">
+             <button (click)="logout()" class="flex items-center h-15  w-full">
+               <ng-icon name="ionLogOutOutline" class="text-2xl"></ng-icon>
+               <span class="text-sm px-3">Cerrar Sesión</span>
+             </button>
+           </li>
           </ul>
         </div>
-</div>
+    </div>

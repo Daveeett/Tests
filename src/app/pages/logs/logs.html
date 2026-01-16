@@ -1,18 +1,13 @@
 <div id="logsTable" class="overflow-x-auto p-10 ">
+  <div class="flex justify-between items-center ">
+    <h1 class="text-4xl font-bold text-base-content flex items-center gap-3">
+      <ng-icon name="ionDocumentTextOutline" class="text-4xl"></ng-icon>
+      <span>Registros</span>
+    </h1>
     
-  
-  <div class="flex justify-between items-center gap-5">
-    <h1 class="text-4xl font-bold text-info-content ">Logs</h1>
-    
-    <div class="flex gap-3">
-      <button (click)="exportToExcel()" class="btn bg-green-600 text-white border-none hover:bg-green-700 btn-md btn-outline gap-2">
-        <ng-icon class="text-xl gap-2" name="ionDownloadOutline"></ng-icon>
-        Exportar a Excel
-      </button>
-    </div>
   </div>
 
-  <div class=" p-5">
+  <div class="p-5">
 
     <div class="flex flex-wrap items-end">
       <div class="flex gap-2 items-end">
@@ -73,15 +68,40 @@
   </div>
 
   
-  <div class="min-h-[600px]">
-    <table *ngIf="paginatedLogs?.length" class="table table-md w-full">
+  <div class="min-h-[600px] mt-3">
+    <table *ngIf="paginatedLogs?.length" class="table table-xs w-full">
       <thead>
         <tr>
-          <th class="text-2xl text-info-content text-center">Posición</th>
-          <th class="text-2xl text-info-content text-center">Hora</th>
-          <th class="text-2xl text-info-content text-center">Fecha</th>
-          <th class="text-2xl text-info-content text-center">Tipo de Log</th>
-          <th class="text-2xl text-info-content ">Contenido</th>
+          <th class="text-md text-base-content text-center">
+            <div class="flex items-center justify-center gap-1">
+              <ng-icon name="ionIdCardOutline" class="text-xl"></ng-icon>
+              <span>Posición</span>
+            </div>
+          </th>
+          <th class="text-md text-base-content text-center">
+            <div class="flex items-center justify-center gap-1">
+              <ng-icon name="ionTimeOutline" class="text-xl"></ng-icon>
+              <span>Hora</span>
+            </div>
+          </th>
+          <th class="text-md text-base-content text-center">
+            <div class="flex items-center justify-center gap-1">
+              <ng-icon name="ionCalendarOutline" class="text-xl"></ng-icon>
+              <span>Fecha</span>
+            </div>
+          </th>
+          <th class="text-md text-base-content text-center">
+            <div class="flex items-center justify-center gap-1">
+              <ng-icon name="ionColorFilterOutline" class="text-xl"></ng-icon>
+              <span>Tipo de Log</span>
+            </div>
+          </th>
+          <th class="text-md text-base-content">
+            <div class="flex items-center gap-1">
+              <ng-icon name="ionReaderOutline" class="text-xl"></ng-icon>
+              <span>Contenido</span>
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -90,18 +110,18 @@
           <td class="text-xl text-center">{{ log.time }}</td>
           <td class="text-xl text-center">{{ log.date }}</td>
           <td class="text-xl text-center">
-            <span [ngClass]="getLogLevelClass(log.logLevel)" class="badge badge-lg font-semibold">
+            <span [ngClass]="getLogLevelClass(log.logLevel)" class="badge badge-sm font-semibold">
               {{ log.logLevel }}
             </span>
           </td>
-          <td class="text-xl">
+          <td class="text-sm">
             <div class="collapse collapse-arrow bg-base-200">
               <input type="checkbox" name="accordion-{{ log.id }}" />
-              <div class="collapse-title text-xl font-medium">
+              <div class="collapse-title ">
                 {{ log.content.length > 80 ? (log.content.substring(0, 80) + '...') : log.content }}
               </div>
               <div class="collapse-content">
-                <p class="whitespace-pre-wrap break-words ">{{ log.content }}</p>
+                <p>{{ log.content }}</p>
               </div>
             </div>
           </td>

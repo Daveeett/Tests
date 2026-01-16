@@ -13,7 +13,7 @@ export const routes: Routes = [
   { path: 'logs', component: Logs, canActivate: [AuthGuard] },
   { path: 'tenants', component: Tenants, canActivate: [AuthGuard] },
   { path: 'plans', component: Plans, canActivate: [AuthGuard] },
-  {path:'configuration',component:Configuration,canActivate:[AuthGuard]},
+  { path:'configuration',component:Configuration,canActivate:[AuthGuard]},
   { path: '', redirectTo: 'login-developer', pathMatch: 'full' },
   { path: '**', redirectTo: '' },
 ];

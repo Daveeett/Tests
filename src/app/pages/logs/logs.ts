@@ -3,17 +3,18 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { ionLogOutOutline, ionDownloadOutline, ionSearch, ionMenu } from '@ng-icons/ionicons';
+import { ionLogOutOutline, ionDownloadOutline, ionSearch, ionMenu, ionDocumentTextOutline,ionIdCardOutline, 
+  ionCardOutline,ionTimeOutline,ionCalendarOutline,ionPrismOutline,ionReaderOutline,ionColorFilterOutline } from '@ng-icons/ionicons';
 import { LogsService } from '../../core/services/Developer/logs.service';
-import { DateUtilsService } from '../../core/services/Developer/date-utils.service';
-import { ExcelExportService } from '../../core/services/Developer/excel-export.service';
-import { AuthCodeService } from '../../services/auth-code.service';
-import { getLogLevelClass } from '../../core/enums/log-level.enum';
+import { DateUtilsService } from '../../core/services/utils/date-utils.service';
+import { AuthSessionService } from '../../core/services/auth/auth-session.service';
+import { getLogLevelClass } from '../../core/enums/logs/log-level.enum';
 
 @Component({
   selector: 'app-logs',
   imports: [CommonModule, FormsModule, NgIcon],
-  viewProviders: [provideIcons({ ionLogOutOutline, ionDownloadOutline, ionSearch, ionMenu })],
+  viewProviders: [provideIcons({ ionLogOutOutline, ionDownloadOutline, ionSearch, ionMenu, ionDocumentTextOutline,ionIdCardOutline, 
+    ionCardOutline,ionTimeOutline,ionCalendarOutline,ionPrismOutline,ionReaderOutline, ionColorFilterOutline})],
   templateUrl: './logs.html',
   styleUrl: './logs.css',
 })
@@ -34,15 +35,14 @@ export class Logs implements OnInit, OnDestroy {
 
   constructor(
     private logsService: LogsService,
-    private authCodeService: AuthCodeService,
+    private authSessionService: AuthSessionService,
     private dateUtils: DateUtilsService,
-    private excelExport: ExcelExportService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.authCodeService.startSessionTimer();
+      this.authSessionService.startSessionTimer();
       const today = this.dateUtils.getTodayFormatted();
       this.startDate = today;
       this.endDate = today;
@@ -54,7 +54,6 @@ export class Logs implements OnInit, OnDestroy {
     this.pollingSubscription?.unsubscribe();
   }
 
-  // Maneja el cambio de fecha
   onDateChange(): void {
     if (this.startDate && this.endDate) {
       this.loading = true;
@@ -77,7 +76,6 @@ export class Logs implements OnInit, OnDestroy {
     }
   }
 
-  // Limpiar filtros de fecha
   clearDateFilters(): void {
     this.startDate = '';
     this.endDate = '';
@@ -88,12 +86,10 @@ export class Logs implements OnInit, OnDestroy {
     this.totalLogsCount = 0;
   }
 
-  // Obtiene la clase CSS para el nivel de log
   getLogLevelClass(logLevel: string): string {
     return getLogLevelClass(logLevel);
   }
 
-  // Carga los logs para una página específica
   loadLogsForPage(page: number): void {
     if (!this.startDate || !this.endDate) return;
 
@@ -117,7 +113,6 @@ export class Logs implements OnInit, OnDestroy {
     });
   }
 
-  // Maneja la selección de página desde el desplegable
   onPageSelect(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const page = parseInt(selectElement.value, 10);
@@ -127,21 +122,18 @@ export class Logs implements OnInit, OnDestroy {
     }
   }
 
-  // Navega a la página siguiente
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.loadLogsForPage(this.currentPage + 1);
     }
   }
 
-  // Navega a la página anterior
   prevPage(): void {
     if (this.currentPage > 1) {
       this.loadLogsForPage(this.currentPage - 1);
     }
   }
 
-  // Navega a una página específica
   goToPage(page: number | string): void {
     if (typeof page !== 'number') return;
     if (page >= 1 && page <= this.totalPages) {
@@ -149,7 +141,6 @@ export class Logs implements OnInit, OnDestroy {
     }
   }
 
-  // Obtiene los números de página para la visualización de la paginación
   getPageNumbers(): (number | string)[] {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
@@ -168,11 +159,6 @@ export class Logs implements OnInit, OnDestroy {
       }
     }
     return pages;
-  }
-
-  // Exporta los logs a Excel usando ExcelExportService
-  exportToExcel(): void {
-    this.excelExport.exportLogs(this.paginatedLogs);
   }
 
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../../services/api.service';
+import { ApiService } from '../api/api.service';
 import { IBaseResponse } from '../../../interfaces/ibase-response';
 import { LogsUsersResponse } from '../../../interfaces/Responses/Developer/LogsUsers/logs-users-response';
 import { LogsResponse } from '../../../interfaces/Responses/Developer/Logs/logs-responses';
@@ -19,13 +19,11 @@ export class LogsService {
     private api: ApiService
   ) {}
 
-  // Obtiene los logs de los usuarios
   public getLogsUsers(): Observable<IBaseResponse<LogsUsersResponse>> {
     const url = this.api.url(`${this.basePath}/logsusers`);
     return this.http.get<IBaseResponse<LogsUsersResponse>>(url);
   }
 
-  // Obtiene los logs por rango de fecha y pagina
   public getLogs(
     startDate: string,
     endDate: string,
@@ -40,7 +38,6 @@ export class LogsService {
     return this.http.get<IBaseResponse<LogsResponse>>(url, { params });
   }
 
-  // Obtiene la informacion de paginacion para los logs por rango de fecha
   public getPaginationLogsByDate(
     startDate: string,
     endDate: string

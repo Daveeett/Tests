@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../../services/api.service';
+import { ApiService } from '../api/api.service';
 import { IBaseResponse } from '../../../interfaces/ibase-response';
 import { GetConfigurationResponse } from '../../../interfaces/Responses/Configuration-tenant/get-configuration-response';
 import { UpdateConfigurationRequest } from '../../../interfaces/Requests/Configuration-tenant/update-configuration-request';
@@ -18,18 +18,16 @@ export class AppsettingsService {
     private api: ApiService
   ) {}
   
-    public getAppSettings(): Observable<IBaseResponse<GetConfigurationResponse>> {
-      const url = this.api.url(`${this.basePath}/gettenantconfig`);
+    public getMyConfig(): Observable<IBaseResponse<GetConfigurationResponse>> {
+      const url = this.api.url(`${this.basePath}/getmyconfig`);
       return this.http.get<IBaseResponse<GetConfigurationResponse>>(url);
-  
     }
-    public updateConfig(config: GetConfigurationResponse): Observable<IBaseResponse<boolean>> {
-      const url = this.api.url(`${this.basePath}/updateconfig`);
+    
+    public updateMyConfig(config: GetConfigurationResponse): Observable<IBaseResponse<boolean>> {
+      const url = this.api.url(`${this.basePath}/updatemyconfig`);
       const requestBody: UpdateConfigurationRequest = {
         Configuration: config
       };
       return this.http.put<IBaseResponse<boolean>>(url, requestBody);
-  
     }
-  
 }

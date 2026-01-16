@@ -4,17 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { interval, Subscription } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { ionLogOutOutline, ionDownloadOutline, ionSearch } from '@ng-icons/ionicons';
+import { ionLogOutOutline,ionPersonOutline, ionDownloadOutline,ionGlobeOutline, ionTimeOutline, ionSearch, ionPeopleOutline } from '@ng-icons/ionicons';
 import { LogsService } from '../../core/services/Developer/logs.service';
-import { DateUtilsService } from '../../core/services/Developer/date-utils.service';
-import { ExcelExportService } from '../../core/services/Developer/excel-export.service';
-import { AuthCodeService } from '../../services/auth-code.service';
-import { POLLING_CONFIG, PAGINATION_CONFIG } from '../../core/constants/app.constants';
+import { DateUtilsService } from '../../core/services/utils/date-utils.service';
+import { ExcelExportService } from '../../core/services/utils/excel-export.service';
+import { AuthSessionService } from '../../core/services/auth/auth-session.service';
 
 @Component({
   selector: 'app-logs-users',
   imports: [CommonModule, FormsModule, NgIcon],
-  viewProviders: [provideIcons({ ionLogOutOutline, ionDownloadOutline, ionSearch })],
+  viewProviders: [provideIcons({ ionLogOutOutline, ionPersonOutline, ionDownloadOutline, ionGlobeOutline, ionTimeOutline, ionSearch, ionPeopleOutline })],
   templateUrl: './logs-users.html',
   styleUrl: './logs-users.css',
 })
@@ -26,7 +25,7 @@ export class LogsUsers implements OnInit, OnDestroy {
   startDate: string = '';
   endDate: string = '';
   currentPage = 1;
-  itemsPerPage = PAGINATION_CONFIG.DEFAULT_ITEMS_PER_PAGE;
+  itemsPerPage = 10;
   totalPages = 1;
   loading = false;
   error: string | null = null;
@@ -35,7 +34,7 @@ export class LogsUsers implements OnInit, OnDestroy {
 
   constructor(
     private logsService: LogsService,
-    private authCodeService: AuthCodeService,
+    private authSessionService: AuthSessionService,
     private dateUtils: DateUtilsService,
     private excelExport: ExcelExportService,
     @Inject(PLATFORM_ID) private platformId: Object
@@ -43,11 +42,11 @@ export class LogsUsers implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.authCodeService.startSessionTimer();
+      this.authSessionService.startSessionTimer();
     }
 
     this.loading = true;
-    this.pollingSubscription = interval(POLLING_CONFIG.LOGS_USERS_INTERVAL)
+    this.pollingSubscription = interval(6000)
       .pipe(
         startWith(0),
         switchMap(() => this.logsService.getLogsUsers())
@@ -74,17 +73,14 @@ export class LogsUsers implements OnInit, OnDestroy {
     this.pollingSubscription?.unsubscribe();
   }
 
-  // Filtra los logs por nombre de usuario y rango de fecha
   applyFilter(resetPage: boolean = false): void {
     let filtered = [...this.logs];
 
-    // Filtra por nombre de usuario
     if (this.searchTerm && this.searchTerm.trim() !== '') {
       const searchLower = this.searchTerm.toLowerCase().trim();
       filtered = filtered.filter((log) => log.userName.toLowerCase().includes(searchLower));
     }
 
-    // Filtra por rango de fecha
     if (this.startDate || this.endDate) {
       filtered = this.dateUtils.filterByDateRange(
         filtered,
@@ -97,7 +93,6 @@ export class LogsUsers implements OnInit, OnDestroy {
     this.filteredLogs = filtered;
     this.totalPages = Math.ceil(this.filteredLogs.length / this.itemsPerPage);
 
-    // Reinicia la página actual si se requiere o si la página actual excede el número total de páginas
     if (resetPage || this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages > 0 ? Math.min(this.currentPage, this.totalPages) : 1;
     }
@@ -105,17 +100,13 @@ export class LogsUsers implements OnInit, OnDestroy {
     this.updatePaginatedLogs();
   }
 
-  // Maneja los cambios en el campo de búsqueda
   onSearchChange(): void {
     this.applyFilter(true);
   }
-
-  // Maneja los cambios en las fechas
   onDateChange(): void {
     this.applyFilter(true);
   }
 
-  // Filtro rápido: hoy
   filterToday(): void {
     const today = this.dateUtils.getTodayFormatted();
     this.startDate = today;
@@ -123,35 +114,30 @@ export class LogsUsers implements OnInit, OnDestroy {
     this.applyFilter(true);
   }
 
-  // Filtro rápido: últimos 7 días
   filterLastWeek(): void {
     this.startDate = this.dateUtils.getDaysAgoFormatted(7);
     this.endDate = this.dateUtils.getTodayFormatted();
     this.applyFilter(true);
   }
 
-  // Filtro rápido: últimos 30 días
   filterLast30Days(): void {
     this.startDate = this.dateUtils.getDaysAgoFormatted(30);
     this.endDate = this.dateUtils.getTodayFormatted();
     this.applyFilter(true);
   }
 
-  // Limpia los filtros de fecha
   clearDateFilters(): void {
     this.startDate = '';
     this.endDate = '';
     this.applyFilter(true);
   }
 
-  // Actualiza los logs paginados basados en la página actual
   updatePaginatedLogs(): void {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedLogs = this.filteredLogs.slice(startIndex, endIndex);
   }
 
-  // Navega a la página siguiente
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
@@ -159,7 +145,6 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
   }
 
-  // Navega a la página anterior
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
@@ -167,7 +152,6 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
   }
 
-  // Navega a una página específica
   goToPage(page: number | string): void {
     if (typeof page !== 'number') return;
     if (page >= 1 && page <= this.totalPages) {
@@ -176,7 +160,6 @@ export class LogsUsers implements OnInit, OnDestroy {
     }
   }
 
-  // Obtiene los números de página para la paginación
   getPageNumbers(): (number | string)[] {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
@@ -197,7 +180,6 @@ export class LogsUsers implements OnInit, OnDestroy {
     return pages;
   }
 
-  // Exporta los logs de los usuarios a Excel
   exportToExcel(): void {
     this.excelExport.exportUserLogs(this.filteredLogs);
   }

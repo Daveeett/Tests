@@ -1,7 +1,10 @@
 <div id="logsUsersTable" class="overflow-x-auto p-10">
   
   <div class="flex justify-between items-center mb-5">
-    <h1 class="text-4xl font-bold text-info-content">Logs de Usuarios</h1>
+    <h1 class="text-4xl font-bold text-base-content flex items-center gap-3 ">
+      <ng-icon name="ionPeopleOutline" class="text-4xl"></ng-icon>
+      <span>Logs de Usuarios</span>
+    </h1>
     <div class="flex gap-3">
       <button (click)="exportToExcel()" class="btn bg-green-600 text-white border-none hover:bg-green-700 btn-md btn-outline gap-2">
         <ng-icon class="text-xl gap-2" name="ionDownloadOutline"></ng-icon>
@@ -80,20 +83,35 @@
 
   
   <div class="min-h-[600px]">
-    <table *ngIf="paginatedLogs?.length" class="table table-md w-full">
+    <table *ngIf="paginatedLogs?.length" class="table table-sm w-full">
       <thead>
         <tr>
-          <th class="text-2xl text-info-content">User</th>
-          <th class="text-2xl text-info-content">User IP</th>
-          <th class="text-2xl text-info-content">Login Time</th>
+          <th class="text-lg text-base-content">
+            <div class="flex items-center gap-2">
+              <ng-icon name="ionPersonOutline" class="text-md"></ng-icon>
+              <span>User</span>
+            </div>
+          </th>
+          <th class="text-lg text-base-content">
+            <div class="flex items-center gap-2">
+              <ng-icon name="ionGlobeOutline" class="text-md"></ng-icon>
+              <span>User IP</span>
+            </div>
+          </th>
+          <th class="text-lg text-base-content">
+            <div class="flex items-center gap-2">
+              <ng-icon name="ionTimeOutline" class="text-md"></ng-icon>
+              <span>Login Time</span>
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody >
         <tr  *ngFor="let log of paginatedLogs">
           
-          <td class="text-xl ">{{ log.userName }}</td>
-          <td class="text-xl ">{{ log.userIp }}</td>
-          <td class="text-xl ">{{ log.loginTime | date:'medium' }}</td>
+          <td class="text-lg ">{{ log.userName }}</td>
+          <td class="text-lg ">{{ log.userIp }}</td>
+          <td class="text-lg ">{{ log.loginTime | date:'medium' }}</td>
         </tr>
       </tbody>
     </table>

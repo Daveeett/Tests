@@ -8,7 +8,6 @@ import { DateUtilsService } from './date-utils.service';
 export class ExcelExportService {
   constructor(private dateUtils: DateUtilsService) {}
 
-  // Export data to Excel file
   public exportToExcel<T>(
     data: T[],
     fileName: string,
@@ -16,29 +15,29 @@ export class ExcelExportService {
     columnWidths?: Array<{ wch: number }>
   ): void {
     if (!data || data.length === 0) {
-      console.error('No data provided for export');
+      console.error('[ExcelExportService] No data provided for export');
       return;
     }
-    // Crea la hoja de trabajo
+
+    // Create worksheet
     const worksheet = XLSX.utils.json_to_sheet(data);
 
-    // Aplica anchos de columnas si se proporcionan
+    // Apply column widths if provided
     if (columnWidths) {
       worksheet['!cols'] = columnWidths;
     }
 
-    // Crea el libro de trabajo
+    // Create workbook
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
 
-    // Genera el nombre del archivo con timestamp
+    // Generate filename with timestamp
     const fullFileName = `${fileName}_${this.dateUtils.getFileNameTimestamp()}.xlsx`;
 
-    // Descarga el archivo
+    // Download file
     XLSX.writeFile(workbook, fullFileName);
   }
 
-  // Exporta los logs a Excel
   public exportLogs(
     logs: Array<{ id: number; date: string; time: string; logLevel: string; content: string }>
   ): void {
@@ -61,7 +60,6 @@ export class ExcelExportService {
     this.exportToExcel(dataToExport, 'logs', 'Logs', columnWidths);
   }
 
-  // Exporta los logs de usuarios a Excel
   public exportUserLogs(
     logs: Array<{ userIp: string; userName: string; loginTime: string }>
   ): void {

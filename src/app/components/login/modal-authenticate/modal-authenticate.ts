@@ -1,10 +1,9 @@
 import { Component, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { ionSendOutline } from '@ng-icons/ionicons';
-import { AuthService } from '../../core/services/Developer/auth.service';
-import { AuthCodeService } from '../../services/auth-code.service';
-import { ValidateCodeRequest } from '../../interfaces/Requests/Developer/validate-code-request';
-
+import { AuthSessionService } from '../../../core/services/auth/auth-session.service';
+import { ValidateCodeRequest } from '../../../interfaces/Requests/Developer/validate-code-request';
+import { AuthApiService } from '../../../core/services/auth/auth-api.service';
 @Component({
   selector: 'app-modal-authenticate',
   imports: [NgIcon],
@@ -20,13 +19,10 @@ export class ModalAuthenticate {
   private currentEmail: string = '';
 
   constructor(
-    private authService: AuthService,
-    private authCodeService: AuthCodeService
+    private authApiService: AuthApiService,
+    private authSessionService: AuthSessionService
   ) {}
 
-  /**
-   * Open the modal and send authentication code
-   */
   public open(email: string) {
     this.currentEmail = email;
 
@@ -39,9 +35,6 @@ export class ModalAuthenticate {
     this.modalRef.nativeElement.showModal();
   }
 
-  /**
-   * Reset UI state
-   */
   private resetUI() {
     const errorEl = this.modalRef.nativeElement.querySelector('#codeError');
     if (errorEl) {
@@ -54,11 +47,8 @@ export class ModalAuthenticate {
     }
   }
 
-  /**
-   * Send authentication code to user's email
-   */
   private sendAuthenticationCode() {
-    this.authService.sendAuthenticationCode({ EmailAddress: this.currentEmail }).subscribe({
+    this.authApiService.sendAuthenticationCode({ EmailAddress: this.currentEmail }).subscribe({
       next: (response) => {
         if (!response.result) {
           console.error('Error sending authentication code:', response.message);
@@ -70,9 +60,6 @@ export class ModalAuthenticate {
     });
   }
 
-  /**
-   * Verify the authentication code entered by user
-   */
   public verify() {
     const input = this.modalRef.nativeElement.querySelector('#authCode') as HTMLInputElement;
     const code = input?.value?.trim() || '';
@@ -87,11 +74,10 @@ export class ModalAuthenticate {
       AuthenticationCode: code,
     };
 
-    this.authService.verifyAuthenticationCode(request).subscribe({
+    this.authApiService.verifyAuthenticationCode(request).subscribe({
       next: (response) => {
         if (response.result) {
-          // Save code to localStorage so AuthGuard allows access
-          this.authCodeService.saveAuthCode(code);
+          this.authSessionService.saveAuthCode(code);
           this.modalRef.nativeElement.close();
           this.verified.emit();
         } else {
@@ -105,9 +91,6 @@ export class ModalAuthenticate {
     });
   }
 
-  /**
-   * Close the modal
-   */
   public cancel() {
     this.modalRef.nativeElement.close();
   }

@@ -1,0 +1,325 @@
+<dialog #modalDialog class="modal">
+  <div class="modal-box h-11/12 max-w-5xl">
+    <h3 class="font-bold text-3xl mb-4">Crear Tenant</h3>
+    
+    <form [formGroup]="tenantForm" (ngSubmit)="onSubmit()">
+      <!-- Tenant Basic Information -->
+      <div class="divider text-lg font-semibold">Información del Tenant</div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Nombre de Empresa</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="enterpriseName"
+            placeholder="Nombre de la empresa" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('enterpriseName')?.invalid && tenantForm.get('enterpriseName')?.touched">
+            <span class="label-text-alt text-error">El nombre de empresa es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Identificación</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="identification"
+            placeholder="RUC o identificación" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('identification')?.invalid && tenantForm.get('identification')?.touched">
+            <span class="label-text-alt text-error">La identificación es requerida</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Schema</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="schemaName"
+            placeholder="nombre_schema"
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('schemaName')?.invalid && tenantForm.get('schemaName')?.touched">
+            <span class="label-text-alt text-error">El schema es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Dominio</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="domain"
+            placeholder="http://localhost:42000" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('domain')?.invalid && tenantForm.get('domain')?.touched">
+            <span class="label-text-alt text-error">El dominio es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label cursor-pointer">
+            <span class="label-text text-lg text-base-content">Activar Inmediatamente</span>
+          </label>
+          <select formControlName="activateImmediately" class="select select-bordered w-full mt-2">
+            <option [value]="true">Activo</option>
+            <option [value]="false">No Activo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Plan Information -->
+      <div class="divider text-lg font-semibold mt-6">Información del Plan</div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Plan</span>
+          </label>
+          <input 
+            type="number" 
+            formControlName="planId"
+            placeholder="ID del plan" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('planId')?.invalid && tenantForm.get('planId')?.touched">
+            <span class="label-text-alt text-error">El plan es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Fecha de Expiración</span>
+          </label>
+          <input 
+            type="datetime-local" 
+            formControlName="planExpireAt"
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('planExpireAt')?.invalid && tenantForm.get('planExpireAt')?.touched">
+            <span class="label-text-alt text-error">La fecha de expiración es requerida</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- First User Information -->
+      <div class="divider text-lg font-semibold mt-6">Primer Usuario</div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Nombre</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="firstName"
+            placeholder="Nombre" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('firstName')?.invalid && tenantForm.get('firstName')?.touched">
+            <span class="label-text-alt text-error">El nombre es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Apellido</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="lastName"
+            placeholder="Apellido" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('lastName')?.invalid && tenantForm.get('lastName')?.touched">
+            <span class="label-text-alt text-error">El apellido es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Email</span>
+          </label>
+          <input 
+            type="email" 
+            formControlName="emailAddress"
+            placeholder="usuario@empresa.com" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('emailAddress')?.invalid && tenantForm.get('emailAddress')?.touched">
+            <span class="label-text-alt text-error">Email válido es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Identificación</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="userIdentification"
+            placeholder="Cédula o identificación" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('userIdentification')?.invalid && tenantForm.get('userIdentification')?.touched">
+            <span class="label-text-alt text-error">La identificación es requerida</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full md:col-span-2">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Contraseña</span>
+          </label>
+          <input 
+            type="password" 
+            formControlName="password"
+            placeholder="Mínimo 8 caracteres" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('password')?.invalid && tenantForm.get('password')?.touched">
+            <span class="label-text-alt text-error">La contraseña debe tener al menos 8 caracteres</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- SMTP Configuration -->
+      <div class="divider text-lg font-semibold mt-6">Configuración SMTP</div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content ">Host SMTP</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="smtpHost"
+            placeholder="smtp.gmail.com" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('smtpHost')?.invalid && tenantForm.get('smtpHost')?.touched">
+            <span class="label-text-alt text-error">El host SMTP es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Puerto SMTP</span>
+          </label>
+          <input 
+            type="number" 
+            formControlName="smtpPort"
+            placeholder="587" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('smtpPort')?.invalid && tenantForm.get('smtpPort')?.touched">
+            <span class="label-text-alt text-error">Puerto válido es requerido (1-65535)</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Usuario SMTP</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="smtpUsername"
+            placeholder="usuario@empresa.com" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('smtpUsername')?.invalid && tenantForm.get('smtpUsername')?.touched">
+            <span class="label-text-alt text-error">El usuario SMTP es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Contraseña SMTP</span>
+          </label>
+          <input 
+            type="password" 
+            formControlName="smtpPassword"
+            placeholder="Contraseña SMTP" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('smtpPassword')?.invalid && tenantForm.get('smtpPassword')?.touched">
+            <span class="label-text-alt text-error">La contraseña SMTP es requerida</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Dirección del Remitente</span>
+          </label>
+          <input 
+            type="email" 
+            formControlName="smtpSenderAddress"
+            placeholder="noreply@empresa.com" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('smtpSenderAddress')?.invalid && tenantForm.get('smtpSenderAddress')?.touched">
+            <span class="label-text-alt text-error">Email válido es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text text-lg text-base-content">Nombre del Remitente</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="smtpSenderName"
+            placeholder="Nombre de la empresa" 
+            class="input input-bordered w-full mt-1" 
+          />
+          <label class="label" *ngIf="tenantForm.get('smtpSenderName')?.invalid && tenantForm.get('smtpSenderName')?.touched">
+            <span class="label-text-alt text-error">El nombre del remitente es requerido</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label cursor-pointer">
+            <span class="label-text text-lg text-base-content">Habilitar SSL</span>
+          </label>
+          <select formControlName="smtpEnableSsl" class="select select-bordered w-full mt-2">
+            <option [value]="true">Activo</option>
+            <option [value]="false">No Activo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="modal-action mt-6">
+        <button 
+          type="button" 
+          class="btn btn-ghost text-lg" 
+          (click)="closeModal()"
+          [disabled]="isSubmitting"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary text-lg"
+          [disabled]="tenantForm.invalid || isSubmitting"
+        >
+          <span *ngIf="!isSubmitting">Crear Tenant</span>
+          <span *ngIf="isSubmitting" class="loading loading-spinner"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="closeModal()">close</button>
+  </form>
+</dialog>

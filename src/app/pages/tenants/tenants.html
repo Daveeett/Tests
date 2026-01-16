@@ -1,39 +1,91 @@
 <div id="logsUsersTable" class="overflow-x-auto p-10">
   
   <div class="flex justify-between items-center mb-5">
-    <h1 class="text-4xl font-bold text-info-content">Tenants</h1>
+    <h1 class="text-4xl font-bold text-base-content flex items-center gap-3">
+      <ng-icon name="ionBusinessOutline" class="text-4xl"></ng-icon>
+      <span>Tenants</span>
+    </h1>
+    <button class="btn bg-base-content text-base-100 rounded-full" (click)="openModalCreate()">
+      <ng-icon class="text-xl " name="ionAdd"></ng-icon>
+      <span>Create Tenant</span>
+    </button>
   </div>
 
-    <table class="table table-md w-full">
+    <table class="table table-sm w-full">
     <thead>
       <tr>
-        <th class="text-2xl text-info-content text-center">ID</th>
-        <th class="text-2xl text-info-content ">Nombre</th>
-        <th class="text-2xl text-info-content ">Dominio</th>
-        <th class="text-2xl text-info-content text-center">Schema</th>
-        <th class="text-2xl text-info-content text-center">Estado</th>
-        <th class="text-2xl text-info-content text-center">Plan</th>
-        <th class="text-2xl text-info-content text-center">Creado</th>
-        <th class="text-2xl text-info-content text-center">Actualizado</th>
-        <th class="text-2xl text-info-content text-center">Acciones</th>
+        <th class="text-lg text-base-content text-center">
+          <div class="flex items-center justify-center gap-2">
+            <ng-icon name="ionIdCardOutline" class="text-lg"></ng-icon>
+            <span>ID</span>
+          </div>
+        </th>
+        <th class="text-lg text-base-content">
+          <div class="flex items-center gap-2">
+            <ng-icon name="ionBusinessOutline" class="text-lg"></ng-icon>
+            <span>Nombre</span>
+          </div>
+        </th>
+        <th class="text-lg text-base-content">
+          <div class="flex items-center gap-2">
+            <ng-icon name="ionGlobeOutline" class="text-lg"></ng-icon>
+            <span>Dominio</span>
+          </div>
+        </th>
+        <th class="text-lg text-base-content text-center">
+          <div class="flex items-center justify-center gap-2">
+            <ng-icon name="ionLayersOutline" class="text-lg"></ng-icon>
+            <span>Schema</span>
+          </div>
+        </th>
+        <th class="text-lg text-base-content text-center">
+          <div class="flex items-center justify-center gap-2">
+            <ng-icon name="ionCheckmarkCircleOutline" class="text-lg"></ng-icon>
+            <span>Estado</span>
+          </div>
+        </th>
+        <th class="text-lg text-base-content text-center">
+          <div class="flex items-center justify-center gap-2">
+            <ng-icon name="ionCardOutline" class="text-lg"></ng-icon>
+            <span>Plan</span>
+          </div>
+        </th>
+        <th class="text-lg text-base-content text-center">
+          <div class="flex items-center justify-center gap-2">
+            <ng-icon name="ionCalendarOutline" class="text-lg"></ng-icon>
+            <span>Creado</span>
+          </div>
+        </th>
+        <th class="text-lg text-base-content text-center">
+          <div class="flex items-center justify-center gap-2">
+            <ng-icon name="ionRefreshOutline" class="text-lg"></ng-icon>
+            <span>Actualizado</span>
+          </div>
+        </th>
+        <th class="text-lg text-base-content text-center">
+          <div class="flex items-center justify-center gap-2">
+            <ng-icon name="ionSettingsOutline" class="text-lg"></ng-icon>
+            <span>Acciones</span>
+          </div>
+        </th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let tenant of paginatedTenants; let i = index">
-        <td class="text-xl text-center">{{ tenant.tenantId }}</td>
-        <td class="text-xl ">{{ tenant.enterpriseName }}</td>
-        <td class="text-xl ">{{ tenant.domain }}</td>
-        <td class="text-xl text-center">{{ tenant.schemaName }}</td>
-        <td class="text-xl text-center">
-          <span class="badge" [class.badge-info]="tenant.isActive" [class.badge-error]="!tenant.isActive">
+        <td class="text-lg text-center">{{ tenant.tenantId }}</td>
+        <td class="text-lg ">{{ tenant.enterpriseName }}</td>
+        <td class="text-lg ">{{ tenant.domain }}</td>
+        <td class="text-lg text-center">{{ tenant.schemaName }}</td>
+        <td class="text-lg text-center">
+          <span class="text-green-700" [class.text-green-700]="tenant.isActive" [class.text-red-700]="!tenant.isActive">
             {{ tenant.isActive ? 'Activo' : 'Inactivo' }}
           </span>
         </td>
-        <td class="text-xl text-center"><span class="badge" [class.badge-success]="tenant.plan.showName=='Free'" [class.badge-error]="tenant.plan.showName=='Premium'">{{tenant.plan.showName }}</span></td>
-        <td class="text-xl text-center">{{ formatDate(tenant.createdAt) }}</td>
-        <td class="text-xl text-center">{{ formatDate(tenant.updatedAt) }}</td>
-        <td class="text-xl text-center">
-          <button class="btn bg-amber-400 btn-md text-xl" (click)="openModalUpdate(tenant)">
+        <td class="text-lg text-center"><span class="text-green-700" [class.text-green-700]="tenant.plan.showName=='Free'">{{tenant.plan.showName }}</span></td>
+        <td class="text-lg text-center">{{ formatDate(tenant.createdAt) }}</td>
+        <td class="text-lg text-center">{{ formatDate(tenant.updatedAt) }}</td>
+        <td class="text-lg text-center">
+          <button class="btn btn-sm text-orange-500 rounded-full text-xl" (click)="openModalUpdate(tenant)">
             <ng-icon name="ionPencil"></ng-icon>
           </button>
         </td>
@@ -47,7 +99,13 @@
   [tenant]="selectedTenant"
   [availablePlans]="availablePlans"
   (tenantUpdated)="onTenantUpdated($event)"
-  (modalClosed)="onModalClosed()"
-></app-modal-update>
+  (modalClosed)="onModalClosed()">
+</app-modal-update>
+
+<!-- Modal de creación -->
+<app-modal-create 
+  (tenantCreated)="onTenantUpdated($event)"
+  (modalClosed)="onModalClosed()">
+</app-modal-create>
 
 </div>

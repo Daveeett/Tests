@@ -1,11 +1,11 @@
 <dialog #modalDialog class="modal">
-  <div class="modal-box w-11/12 max-w-3xl">
-    <h3 class="font-bold text-3xl mb-4">Actualizar Tenant</h3>
+  <div class="modal-box w-11/12 max-w-5xl">
+    <h3 class="font-bold text-3xl mb-4 text-base-content">Actualizar Tenant</h3>
     
     <form [formGroup]="tenantForm" (ngSubmit)="onSubmit()">
       <div class="form-control w-full mb-4">
         <label class="label">
-          <span class="label-text text-lg">Nombre de Empresa</span>
+          <span class="label-text text-lg text-base-content">Nombre de Empresa</span>
         </label>
         <input 
           type="text" 
@@ -20,7 +20,7 @@
 
       <div class="form-control w-full mb-4">
         <label class="label">
-          <span class="label-text text-lg">Dominio</span>
+          <span class="label-text text-lg text-base-content">Dominio</span>
         </label>
         <input 
           type="text" 
@@ -35,32 +35,38 @@
 
       <div class="form-control w-full mb-4">
         <label class="label">
-          <span class="label-text text-lg">Schema</span>
+          <span class="label-text text-lg text-base-content">Schema</span>
         </label>
         <input 
           type="text" 
           formControlName="schemaName"
-          placeholder="schema_name" 
-          class="input input-bordered w-full mt-2" 
+          class="input input-bordered w-full mt-2"
+          (click)="onSchemaNameClick()"
         />
         <label class="label" *ngIf="tenantForm.get('schemaName')?.invalid && tenantForm.get('schemaName')?.touched">
-          <span class="label-text-alt text-error">El schema es requerido</span>
+          <span class="label mt-1 text-alt text-error">El schema es requerido</span>
+        </label>
+        <label class="label" *ngIf="isCurrentDomain">
+          <span class="label mt-1 text-alt text-error">Este campo está deshabilitado porque es tu dominio actual</span>
+        </label>
+        <label class="label" *ngIf="errorSchemaNoExist">
+          <span class="label mt-2 text-alt text-error">El schema ingresado no existe. Verifica el nombre e intenta nuevamente.</span>
         </label>
       </div>
 
       <div class="form-control w-full mb-4">
         <label class="label">
-          <span class="label-text text-lg">Estado</span>
+          <span class="label-text text-lg text-base-content">Estado</span>
         </label>
         <select formControlName="isActive" class="select select-bordered w-full mt-2">
-          <option [ngValue]="true">Activo</option>
-          <option [ngValue]="false">No Activo</option>
+          <option [value]="true">Activo</option>
+          <option [value]="false">No Activo</option>
         </select>
       </div>
 
       <div class="form-control w-full mb-4">
         <label class="label">
-          <span class="label-text text-lg">Plan</span>
+          <span class="label-text text-lg text-base-content">Plan</span>
         </label>
         <select formControlName="planId" class="select select-bordered w-full mt-2">
           <option value="" disabled>Seleccionar plan</option>
@@ -69,6 +75,24 @@
           </option>
         </select>
       </div>
+
+      <div class="form-control w-full mb-4">
+        <label class="label">
+          <span class="label-text text-lg text-base-content">Configuración del Tenant</span>
+        </label>
+        <div class="form-group mt-2 justify-center items-center flex w-auto">
+          <textarea 
+            class="form-control h-[900px] w-11/12" 
+            [(ngModel)]="configurationJson" 
+            [ngModelOptions]="{standalone: true}"
+            rows="100" 
+            style="font-family: monospace;"
+            [disabled]="isLoadingConfig"
+            placeholder="Cargando configuración...">
+          </textarea>
+        </div>
+      </div>
+
 
       <div class="modal-action">
         <button 
@@ -95,3 +119,7 @@
     <button (click)="closeModal()">close</button>
   </form>
 </dialog>
+<!--1.- Cambiar el diseño a blanco y con ,as tablas,
+2.- Modificar el backen para que no me permita modificar el schemaName si es mi dominio actual,
+3.-Agregar el text area y cargar el json en el boton de acciones de modifcar los tenants(se debe mostrar el modal junto con la config del tenant),
+4.-Se deben mostrar todos los schemaName y deben ser modificables -->

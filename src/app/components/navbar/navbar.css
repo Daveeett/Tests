@@ -1,0 +1,22 @@
+.drawer-sidebar {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+.sidebar-header {
+  border-color: #e5e7eb !important;
+}
+
+.sidebar-menu li {
+  color: #1f2937 !important;
+}
+
+.sidebar-menu li:hover {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+}
+
+.sidebar-menu li a,
+.sidebar-menu li button {
+  color: inherit;
+}

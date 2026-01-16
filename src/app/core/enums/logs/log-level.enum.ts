@@ -1,14 +1,11 @@
-// Nivel de log
 export enum LogLevel {
   INFO = 'INF',
   DEBUG = 'DBG',
   WARNING = 'WRN',
   ERROR = 'ERR',
-  CRITICAL = 'CRT',
+  CRITICAL = 'CRT', 
   FATAL = 'FTL',
 }
-
-// Clases CSS para cada nivel de log
  
 export const LOG_LEVEL_CLASSES: Record<LogLevel, string> = {
   [LogLevel.INFO]: 'bg-blue-500 text-white',
@@ -19,7 +16,6 @@ export const LOG_LEVEL_CLASSES: Record<LogLevel, string> = {
   [LogLevel.FATAL]: 'bg-black text-white border border-red-600',
 };
 
-// Obtiene la clase CSS para un nivel de log
 export function getLogLevelClass(logLevel: string): string {
   const level = logLevel as LogLevel;
   return LOG_LEVEL_CLASSES[level] || 'bg-gray-400 text-white';
